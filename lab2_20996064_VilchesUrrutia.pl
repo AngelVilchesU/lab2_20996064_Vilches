@@ -59,19 +59,20 @@ usuario([DD, MM, YYYY], NombreUsuario, ContraseniaUsuario, Sesion, [[DD, MM, YYY
 
 % TDA documento
 % Constructor documento
-documento(IDdocumento, NombreDocumento, [DD, MM, YYYY], ListaVersiones, ListaAccesos, [IDdocumento, NombreDocumento, [DD, MM, YYYY], ListaVersiones, ListaAccesos]):-
+documento(IDdocumento, NombreDocumento, Autor, [DD, MM, YYYY], ListaVersiones, ListaAccesos, [IDdocumento, Autor, NombreDocumento, [DD, MM, YYYY], ListaVersiones, ListaAccesos]):-
     integer(IDdocumento),
     string(NombreDocumento),
+    string(Autor),
     date(_, _, _, [DD, MM, YYYY]).
 
 % Como constructor
-% documento(0, "Doc1", [14, 12, 2021], [], [], Documento1).
+% documento(0, "Doc1", "USER1", [14, 12, 2021], [], [], Documento1).
 
 % Como pertenencia
-% documento(_, _, _, _, _, [0, "Doc1", [14, 12, 2021], [], []]).
+% documento(_, _, _, _, _, _, [0, "USER1", "Doc1", [14, 12, 2021], [[0, [14, 12, 2021], "PRIMER CONTENIDO DOC1"]], []]).
 
 % Como selector
-% documento(_, NombreDocumento, _, _, _, [0, "Doc1", [14, 12, 2021], [], []]).
+% documento(_, NombreDocumento, _, _, _, _, [0, "USER1", "Doc1", [14, 12, 2021], [[0, [14, 12, 2021], "PRIMER CONTENIDO DOC1"]], []]).
 
 % TDA versiones
 % Constructor version
@@ -128,6 +129,29 @@ paradigmaDocsLogin(ParadigmaDocs, NombreUsuario, ContraseniaUsuario, ActParadigm
 
 % paradigmaDocsCreate
 
+paradigmaDocsCreate(ParadigmaDocs, FechaCreacionDocumento, NombreDocumento, ContenidoDocumento, ActParadigmaDocs):-
+    paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuarios, ListaDocumentos, ParadigmaDocs),
+    exist([_, _, _, 1], ListaUsuarios),
+    extraer([FechaUsuario, NombreUsuario, ContraseniaUsuario, 1], ListaUsuarios, USUARIO),
+    borrarElemento(USUARIO, ListaUsuarios, ActListaUsuarios),
+    usuario(FechaUsuario, NombreUsuario, ContraseniaUsuario, 0, ACTUSUARIO),
+    insertarAlPrincipio(ACTUSUARIO, ActListaUsuarios, ListaUsuariosFinal),
+    largoLista(ListaDocumentos, IDdocumento),
+    documento(IDdocumento, NombreDocumento, NombreUsuario, FechaCreacionDocumento, [], [], Documento),
+    documento(_, _, _, _, ListaVersiones, _, Documento),
+    version(0, FechaCreacionDocumento, ContenidoDocumento, PrimeraVersion),
+    insertarAlFinal(PrimeraVersion, ListaVersiones, NuevaListaVersiones),
+    documento(IDdocumento, NombreDocumento, NombreUsuario, FechaCreacionDocumento, NuevaListaVersiones, [], DocumentoFinal),
+    insertarAlPrincipio(DocumentoFinal, ListaDocumentos, ListaDocumentosFinal),
+    paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuariosFinal, ListaDocumentosFinal, ActParadigmaDocs).
+
+
+% Ejemplo 1:
+% paradigmaDocsCreate(["paradigmaDocs", [12, 10, 2002], [[[14, 12, 2021], "USER1", "PASS1", 1]], []], [17, 12, 2021], "Doc1", "Primer Contenido Doc 1", ActParadigmaDocs).
+% Ejemplo 2:
+% paradigmaDocsCreate(["paradigmaDocs", [12, 10, 2002], [[[14, 12, 2021], "USER1", "PASS1", 1]], [[0, "USER1", "Doc1", [17, 12, 2021], [[0, [17, 12, 2021], "Primer Contenido Doc 1"]], []]]], [17, 12, 2021], "Doc2", "Primer Contenido Doc 2", ActParadigmaDocs).
+% Ejemplo 3:
+% date(20, 12, 2015, D1), date(1, 12, 2021, D2), date(3, 12, 2021, D3), paradigmaDocs("google docs", D1, [],[], PD1), paradigmaDocsRegister(PD1, D2, "vflores", "hola123", PD2), paradigmaDocsRegister(PD2, D2, "crios", "qwert", PD3), paradigmaDocsRegister(PD3, D3, "alopez", "asdfg", PD4), paradigmaDocsLogin(PD4, "vflores", "hola123", PD5), paradigmaDocsCreate(PD5, D2, "archivo 1", "hola mundo, este es el contenido de un archivo", PD6).
 
 
 
@@ -168,3 +192,13 @@ borrarElemento(Elemento, [Elemento|Resto], Resto):-
     !.
 borrarElemento(Elemento, [Cabeza|Resto], [Cabeza|Retorno]):-
     borrarElemento(Elemento, Resto, Retorno).
+
+insertarAlFinal(Elemento, [], [Elemento]):-
+    !.
+insertarAlFinal(Elemento, [Cabeza|Resto], [Cabeza|Lista]):-
+    insertarAlFinal(Elemento, Resto, Lista).
+
+largoLista([], 0).
+largoLista([_|Resto], Largo):-
+    largoLista(Resto, LargoAcum),
+    Largo is LargoAcum + 1.
