@@ -153,8 +153,30 @@ paradigmaDocsCreate(ParadigmaDocs, FechaCreacionDocumento, NombreDocumento, Cont
 % Ejemplo 3:
 % date(20, 12, 2015, D1), date(1, 12, 2021, D2), date(3, 12, 2021, D3), paradigmaDocs("google docs", D1, [],[], PD1), paradigmaDocsRegister(PD1, D2, "vflores", "hola123", PD2), paradigmaDocsRegister(PD2, D2, "crios", "qwert", PD3), paradigmaDocsRegister(PD3, D3, "alopez", "asdfg", PD4), paradigmaDocsLogin(PD4, "vflores", "hola123", PD5), paradigmaDocsCreate(PD5, D2, "archivo 1", "hola mundo, este es el contenido de un archivo", PD6).
 
+% paradigmaDocsShare
 
+paradigmaDocsShare(ParadigmaDocs, IDdocumento, ListaPermisos, ListaUsuariosCompartidos, ActParadigmaDocs):-
+    paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuarios, ListaDocumentos, ParadigmaDocs),
+    exist([_, _, _, 1], ListaUsuarios),
+    extraer([FechaUsuario, NombreUsuario, ContraseniaUsuario, 1], ListaUsuarios, USUARIO),
+    borrarElemento(USUARIO, ListaUsuarios, ActListaUsuarios),
+	usuario(FechaUsuario, NombreUsuario, ContraseniaUsuario, 0, ACTUSUARIO),
+	insertarAlPrincipio(ACTUSUARIO, ActListaUsuarios, ListaUsuariosFinal),
+    exist([IDdocumento, NombreUsuario, _, _, _, _], ListaDocumentos),
+    extraer([IDdocumento, _, NombreDocumento, FechaCreacionDocumento, ListaVersiones, ListaAccesos], ListaDocumentos, Documento),
+    productoLista([ListaUsuariosCompartidos, ListaPermisos], ListaCompartidos),
+    concatenar(ListaCompartidos, ListaAccesos, ListaAccesosFinal),
+    borrarElemento(Documento, ListaDocumentos, ActListaDocumentos),
+    documento(IDdocumento, NombreDocumento, NombreUsuario, FechaCreacionDocumento, ListaVersiones, ListaAccesosFinal, DocumentoFinal),
+    insertarAlPrincipio(DocumentoFinal, ActListaDocumentos, ListaDocumentosFinal),
+    paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuariosFinal, ListaDocumentosFinal, ActParadigmaDocs).
 
+% Ejemplo 1:
+% paradigmaDocsShare(["paradigmaDocs", [12, 10, 2002], [[[14, 12, 2021], "USER1", "PASS1", 1], [[18, 12, 2021], "USER2", "PASS2", 0], [[18, 12, 2021], "USER3", "PASS3", 0]], [[0, "USER1", "Doc1", [17, 12, 2021], [[0, [17, 12, 2021], "Primer Contenido Doc 1"]], []]]], 0, ["R", "W", "C"], ["USER2", "USER3"], ActParadigmaDocs).
+% Ejemplo 2:
+% paradigmaDocsShare(["paradigmaDocs", [12, 10, 2002], [[[14, 12, 2021], "USER1", "PASS1", 1], [[18, 12, 2021], "USER2", "PASS2", 0], [[18, 12, 2021], "USER3", "PASS3", 0]], [[0, "USER1", "Doc1", [17, 12, 2021], [[0, [17, 12, 2021], "Primer Contenido Doc 1"]], []]]], 0, ["C"], ["USER3"], ActParadigmaDocs).
+% Ejemplo 3:
+% date(20, 12, 2015, D1), date(1, 12, 2021, D2), date(3, 12, 2021, D3), paradigmaDocs("google docs", D1, [],[], PD1), paradigmaDocsRegister(PD1, D2, "vflores", "hola123", PD2), paradigmaDocsRegister(PD2, D2, "crios", "qwert", PD3), paradigmaDocsRegister(PD3, D3, "alopez", "asdfg", PD4), paradigmaDocsLogin(PD4, "vflores", "hola123", PD5), paradigmaDocsCreate(PD5, D2, "archivo 1", "hola mundo, este es el contenido de un archivo", PD6), paradigmaDocsLogin(PD6, "vflores", "hola123", PD7), paradigmaDocsShare(PD7, 0, ["W", "R"], ["crios"], PD8).
 
 
 
@@ -202,3 +224,43 @@ largoLista([], 0).
 largoLista([_|Resto], Largo):-
     largoLista(Resto, LargoAcum),
     Largo is LargoAcum + 1.
+
+% Si es una lista de un elemento...
+% Ej: productoLista([["u1"]], Combinaciones).
+productoLista([[Cabeza]], [[Cabeza]]):-
+    !.
+% Si es una lista de mas de un elemento...
+% Ej: productoLista([["u1", "u5"]], Combinaciones).
+productoLista([[Cabeza|Resto1]], [[Cabeza]|Resto2]) :- 
+    productoLista([Resto1], Resto2),
+    !.
+
+% Si son mas de una lista de elementos...
+% Ej: productoLista([["u1", "u5"], ["R", "W", "C"]], Combinaciones).
+productoLista([Cabeza|Resto1], Resto2) :-
+    productoLista(Resto1, R1),
+    producto(Cabeza, R1, Resto2),
+    !.
+
+% Caso base, no hay nada listas que "multiplicar"
+producto([], _, []):-
+    !.
+% Caso recursivo, hay elementos de listas que "multiplicar" con elementos de listas de listas
+% Ej: producto(["u1", "u5"], [["R"], ["W"], ["C"]], Producto).
+producto([Cabeza|Resto], ListadeListas, Acum) :-
+    producto(Resto, ListadeListas, Lista),
+    combinador(Cabeza, ListadeListas, Lista, Acum),
+    !.
+% Caso base, el primer elemento no puede "combinarse" con los elementos contenidos en la primera lista ya que no hay ninguno
+% Ej: combinador("u5", [], [], Com).
+combinador(_, [], Lista, Lista):-
+    !.
+% Caso recursivo, el primer elemento puede ser "combinado" aun con los elementos de la lista de listas
+% combinador("u5", [["R"], ["W"], ["C"]], [], Com).
+combinador(Elemento, [Cabeza1|Resto1], Lista, [[Elemento|Cabeza1]|Resto2]) :-
+    combinador(Elemento, Resto1, Lista, Resto2),
+    !.
+    
+concatenar([], Lista, Lista).
+concatenar([Cabeza|Resto], Lista, [Cabeza|ListaFinal]):-
+    concatenar(Resto, Lista, ListaFinal).
