@@ -59,7 +59,7 @@ usuario([DD, MM, YYYY], NombreUsuario, ContraseniaUsuario, Sesion, [[DD, MM, YYY
 
 % TDA documento
 % Constructor documento
-documento(IDdocumento, NombreDocumento, Autor, [DD, MM, YYYY], ListaVersiones, ListaAccesos, [IDdocumento, Autor, NombreDocumento, [DD, MM, YYYY], ListaVersiones, ListaAccesos]):-
+documento(IDdocumento, NombreDocumento, Autor, [DD, MM, YYYY], ListaVersiones, ListaAccesos, [IDdocumento, NombreDocumento, Autor, [DD, MM, YYYY], ListaVersiones, ListaAccesos]):-
     integer(IDdocumento),
     string(NombreDocumento),
     string(Autor),
@@ -69,10 +69,10 @@ documento(IDdocumento, NombreDocumento, Autor, [DD, MM, YYYY], ListaVersiones, L
 % documento(0, "Doc1", "USER1", [14, 12, 2021], [], [], Documento1).
 
 % Como pertenencia
-% documento(_, _, _, _, _, _, [0, "USER1", "Doc1", [14, 12, 2021], [[0, [14, 12, 2021], "PRIMER CONTENIDO DOC1"]], []]).
+% documento(_, _, _, _, _, _, [0, "Doc1", "USER1", [14, 12, 2021], [[0, [14, 12, 2021], "PRIMER CONTENIDO DOC1"]], []]).
 
 % Como selector
-% documento(_, NombreDocumento, _, _, _, _, [0, "USER1", "Doc1", [14, 12, 2021], [[0, [14, 12, 2021], "PRIMER CONTENIDO DOC1"]], []]).
+% documento(_, NombreDocumento, _, _, _, _, [0, "Doc1", "USER1", [14, 12, 2021], [[0, [14, 12, 2021], "PRIMER CONTENIDO DOC1"]], []]).
 
 % TDA versiones
 % Constructor version
@@ -149,7 +149,7 @@ paradigmaDocsCreate(ParadigmaDocs, FechaCreacionDocumento, NombreDocumento, Cont
 % Ejemplo 1:
 % paradigmaDocsCreate(["paradigmaDocs", [12, 10, 2002], [[[14, 12, 2021], "USER1", "PASS1", 1]], []], [17, 12, 2021], "Doc1", "Primer Contenido Doc 1", ActParadigmaDocs).
 % Ejemplo 2:
-% paradigmaDocsCreate(["paradigmaDocs", [12, 10, 2002], [[[14, 12, 2021], "USER1", "PASS1", 1]], [[0, "USER1", "Doc1", [17, 12, 2021], [[0, [17, 12, 2021], "Primer Contenido Doc 1"]], []]]], [17, 12, 2021], "Doc2", "Primer Contenido Doc 2", ActParadigmaDocs).
+% paradigmaDocsCreate(["paradigmaDocs", [12, 10, 2002], [[[14, 12, 2021], "USER1", "PASS1", 1]], [[0, "Doc1", "USER1", [17, 12, 2021], [[0, [17, 12, 2021], "Primer Contenido Doc 1"]], []]]], [17, 12, 2021], "Doc2", "Primer Contenido Doc 2", ActParadigmaDocs).
 % Ejemplo 3:
 % date(20, 12, 2015, D1), date(1, 12, 2021, D2), date(3, 12, 2021, D3), paradigmaDocs("google docs", D1, [],[], PD1), paradigmaDocsRegister(PD1, D2, "vflores", "hola123", PD2), paradigmaDocsRegister(PD2, D2, "crios", "qwert", PD3), paradigmaDocsRegister(PD3, D3, "alopez", "asdfg", PD4), paradigmaDocsLogin(PD4, "vflores", "hola123", PD5), paradigmaDocsCreate(PD5, D2, "archivo 1", "hola mundo, este es el contenido de un archivo", PD6).
 
@@ -162,8 +162,8 @@ paradigmaDocsShare(ParadigmaDocs, IDdocumento, ListaPermisos, ListaUsuariosCompa
     borrarElemento(USUARIO, ListaUsuarios, ActListaUsuarios),
 	usuario(FechaUsuario, NombreUsuario, ContraseniaUsuario, 0, ACTUSUARIO),
 	insertarAlPrincipio(ACTUSUARIO, ActListaUsuarios, ListaUsuariosFinal),
-    exist([IDdocumento, NombreUsuario, _, _, _, _], ListaDocumentos),
-    extraer([IDdocumento, _, NombreDocumento, FechaCreacionDocumento, ListaVersiones, ListaAccesos], ListaDocumentos, Documento),
+    exist([IDdocumento, _, NombreUsuario, _, _, _], ListaDocumentos),
+    extraer([IDdocumento, NombreDocumento, _, FechaCreacionDocumento, ListaVersiones, ListaAccesos], ListaDocumentos, Documento),
     productoLista([ListaUsuariosCompartidos, ListaPermisos], ListaCompartidos),
     concatenar(ListaCompartidos, ListaAccesos, ListaAccesosFinal),
     borrarElemento(Documento, ListaDocumentos, ActListaDocumentos),
@@ -172,13 +172,55 @@ paradigmaDocsShare(ParadigmaDocs, IDdocumento, ListaPermisos, ListaUsuariosCompa
     paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuariosFinal, ListaDocumentosFinal, ActParadigmaDocs).
 
 % Ejemplo 1:
-% paradigmaDocsShare(["paradigmaDocs", [12, 10, 2002], [[[14, 12, 2021], "USER1", "PASS1", 1], [[18, 12, 2021], "USER2", "PASS2", 0], [[18, 12, 2021], "USER3", "PASS3", 0]], [[0, "USER1", "Doc1", [17, 12, 2021], [[0, [17, 12, 2021], "Primer Contenido Doc 1"]], []]]], 0, ["R", "W", "C"], ["USER2", "USER3"], ActParadigmaDocs).
+% paradigmaDocsShare(["paradigmaDocs", [12, 10, 2002], [[[14, 12, 2021], "USER1", "PASS1", 1], [[18, 12, 2021], "USER2", "PASS2", 0], [[18, 12, 2021], "USER3", "PASS3", 0]], [[0, "Doc1", "USER1", [17, 12, 2021], [[0, [17, 12, 2021], "Primer Contenido Doc 1"]], []]]], 0, ["R", "W", "C"], ["USER2", "USER3"], ActParadigmaDocs).
 % Ejemplo 2:
-% paradigmaDocsShare(["paradigmaDocs", [12, 10, 2002], [[[14, 12, 2021], "USER1", "PASS1", 1], [[18, 12, 2021], "USER2", "PASS2", 0], [[18, 12, 2021], "USER3", "PASS3", 0]], [[0, "USER1", "Doc1", [17, 12, 2021], [[0, [17, 12, 2021], "Primer Contenido Doc 1"]], []]]], 0, ["C"], ["USER3"], ActParadigmaDocs).
+% paradigmaDocsShare(["paradigmaDocs", [12, 10, 2002], [[[14, 12, 2021], "USER1", "PASS1", 1], [[18, 12, 2021], "USER2", "PASS2", 0], [[18, 12, 2021], "USER3", "PASS3", 0]], [[0, "Doc1", "USER1", [17, 12, 2021], [[0, [17, 12, 2021], "Primer Contenido Doc 1"]], []]]], 0, ["C"], ["USER3"], ActParadigmaDocs).
 % Ejemplo 3:
 % date(20, 12, 2015, D1), date(1, 12, 2021, D2), date(3, 12, 2021, D3), paradigmaDocs("google docs", D1, [],[], PD1), paradigmaDocsRegister(PD1, D2, "vflores", "hola123", PD2), paradigmaDocsRegister(PD2, D2, "crios", "qwert", PD3), paradigmaDocsRegister(PD3, D3, "alopez", "asdfg", PD4), paradigmaDocsLogin(PD4, "vflores", "hola123", PD5), paradigmaDocsCreate(PD5, D2, "archivo 1", "hola mundo, este es el contenido de un archivo", PD6), paradigmaDocsLogin(PD6, "vflores", "hola123", PD7), paradigmaDocsShare(PD7, 0, ["W", "R"], ["crios"], PD8).
 
+% paradigmaDocsAdd
 
+paradigmaDocsAdd(ParadigmaDocs, IDdocumento, Fecha, ContenidoTexto, ActParadigmaDocs):-
+    paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuarios, ListaDocumentos, ParadigmaDocs),
+    exist([_, _, _, 1], ListaUsuarios),
+    extraer([FechaUsuario, NombreUsuario, ContraseniaUsuario, 1], ListaUsuarios, USUARIO),
+    borrarElemento(USUARIO, ListaUsuarios, ActListaUsuarios),
+	usuario(FechaUsuario, NombreUsuario, ContraseniaUsuario, 0, ACTUSUARIO),
+	insertarAlPrincipio(ACTUSUARIO, ActListaUsuarios, ListaUsuariosFinal),
+    extraer([IDdocumento, NombreDocumento, _, FechaCreacionDocumento, ListaVersiones, ListaAccesos], ListaDocumentos, Documento),
+    usuarioOcompartido(NombreUsuario, IDdocumento, ListaDocumentos, ListaAccesos),
+    largoLista(ListaVersiones, IDversion),
+    version(IDversion, Fecha, ContenidoTexto, NuevaVersion),
+    insertarAlFinal(NuevaVersion, ListaVersiones, NuevaListaVersiones),
+    borrarElemento(Documento, ListaDocumentos, ActListaDocumentos),
+    documento(IDdocumento, NombreDocumento, NombreUsuario, FechaCreacionDocumento, NuevaListaVersiones, ListaAccesos, DocumentoFinal),
+    insertarAlPrincipio(DocumentoFinal, ActListaDocumentos, ListaDocumentosFinal),
+    paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuariosFinal, ListaDocumentosFinal, ActParadigmaDocs).
+
+% Ejemplo 1:
+% paradigmaDocsAdd(["google docs", [20, 12, 2015], [[[1, 12, 2021], "vflores", "hola123", 0], [[3, 12, 2021], "alopez", "asdfg", 0], [[1, 12, 2021], "crios", "qwert", 1]], [[0, "archivo 1", "vflores", [1, 12, 2021], [[0, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"]], [["crios", "W"], ["crios", "R"]]]]], 0, [19, 12, 2021], "Este es el segundo texto y/o contenido", ActParadigmaDocs).
+% Ejemplo 2:
+% paradigmaDocsAdd(["google docs", [20, 12, 2015], [[[1, 12, 2021], "vflores", "hola123", 0], [[3, 12, 2021], "alopez", "asdfg", 0], [[1, 12, 2021], "crios", "qwert", 1]], [[0, "archivo 1", "vflores", [1, 12, 2021], [[0, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"]], [["crios", "W"], ["crios", "R"]]]]], 0, [19, 12, 2021], "Este es el segundo texto y/o contenido", ActParadigmaDocs).
+% Ejemplo 3:
+% paradigmaDocsAdd(["google docs", [20, 12, 2015], [[[1, 12, 2021], "vflores", "hola123", 0], [[3, 12, 2021], "alopez", "asdfg", 0], [[1, 12, 2021], "crios", "qwert", 1]], [[0, "archivo 1", "vflores", [1, 12, 2021], [[0, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"]], [["crios", "R"]]]]], 0, [19, 12, 2021], "Este es el segundo texto y/o contenido", ActParadigmaDocs).
+% Ejemplo 4:
+% paradigmaDocsAdd(["google docs", [20, 12, 2015], [[[1, 12, 2021], "vflores", "hola123", 1], [[3, 12, 2021], "alopez", "asdfg", 0], [[1, 12, 2021], "crios", "qwert", 0]], [[0, "archivo 1", "vflores", [1, 12, 2021], [[0, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"], [1, [19, 12, 2021], "Este es el segundo texto y/o contenido"]], []]]], 0, [19, 12, 2021], "Este es el tercer texto y/o contenido", ActParadigmaDocs).
+
+
+
+
+
+
+
+
+
+
+
+usuarioOcompartido(Usuario, IDdocumento, ListaDocumentos, ListaAccesos):-
+    exist([IDdocumento, Usuario, _, _, _, _], ListaDocumentos),
+    !;
+    exist([Usuario, "W"], ListaAccesos),
+    !.
 
 
 
