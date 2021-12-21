@@ -213,8 +213,8 @@ paradigmaDocsAdd(ParadigmaDocs, IDdocumento, Fecha, ContenidoTexto, ActParadigma
 % Ejemplo 4:
 % paradigmaDocsAdd(["google docs", [20, 12, 2015], [[[1, 12, 2021], "vflores", "hola123", 1], [[3, 12, 2021], "alopez", "asdfg", 0], [[1, 12, 2021], "crios", "qwert", 0]], [[0, "archivo 1", "vflores", [1, 12, 2021], [[0, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"], [1, [19, 12, 2021], "Este es el segundo texto y/o contenido"]], []]]], 0, [19, 12, 2021], "Este es el tercer texto y/o contenido", ActParadigmaDocs).
 
+% paradigmaDocsRestoreVersion
 
-/*
 paradigmaDocsRestoreVersion(ParadigmaDocs, IDdocumento, IDversion, ActParadigmaDocs):-
 	paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuarios, ListaDocumentos, ParadigmaDocs),
     exist([_, _, _, 1], ListaUsuarios),
@@ -224,12 +224,22 @@ paradigmaDocsRestoreVersion(ParadigmaDocs, IDdocumento, IDversion, ActParadigmaD
 	insertarAlPrincipio(ACTUSUARIO, ActListaUsuarios, ListaUsuariosFinal),
     exist([IDdocumento, _, NombreUsuario, _, _, _], ListaDocumentos),
     extraer([IDdocumento, NombreDocumento, _, FechaCreacionDocumento, ListaVersiones, ListaAccesos], ListaDocumentos, Documento),    
-	*/
+	extraer([IDversion, _, _], ListaVersiones, VersionActual),
+    borrarElemento(VersionActual, ListaVersiones, ActListaVersiones),
+    insertarAlFinal(VersionActual, ActListaVersiones, NuevaActListaVersiones),
+    correlativo(NuevaActListaVersiones, Acumulador, ListaVersionesInversa),
+    correlativo(ListaVersionesInversa, Acumulador, ListaVersionesFinal),
+    borrarElemento(Documento, ListaDocumentos, ActListaDocumentos),
+    documento(IDdocumento, NombreDocumento, NombreUsuario, FechaCreacionDocumento, ListaVersionesFinal, ListaAccesos, ActDocumento),
+	insertarAlPrincipio(ActDocumento, ActListaDocumentos, ListaDocumentosFinal),
+    paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuariosFinal, ListaDocumentosFinal, ActParadigmaDocs).
 
-
-
-
-
+% Ejemplo 1:
+% paradigmaDocsRestoreVersion(["google docs", [20, 12, 2015], [[[1, 12, 2021], "vflores", "hola123", 1], [[3, 12, 2021], "alopez", "asdfg", 0], [[1, 12, 2021], "crios", "qwert", 0]], [[0, "archivo 1", "vflores", [1, 12, 2021], [[0, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"], [1, [19, 12, 2021], "Este es el segundo texto y/o contenido"], [2, [19, 12, 2021], "Este es el tercer texto y/o contenido"]], []]]], 0, 1, ActParadigmaDocs).
+% Ejemplo 2:
+% paradigmaDocsRestoreVersion(["google docs", [20, 12, 2015], [[[1, 12, 2021], "vflores", "hola123", 1], [[3, 12, 2021], "alopez", "asdfg", 0], [[1, 12, 2021], "crios", "qwert", 0]], [[0, "archivo 1", "vflores", [1, 12, 2021], [[0, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"], [1, [19, 12, 2021], "Este es el tercer texto y/o contenido"], [2, [19, 12, 2021], "Este es el segundo texto y/o contenido"]], []]]], 0, 0, ActParadigmaDocs).
+% Ejemplo 3:
+% 
 
 
 
