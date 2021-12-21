@@ -90,6 +90,13 @@ version(IDversion, [DD, MM, YYYY], Contenido, [IDversion, [DD, MM, YYYY], Conten
 % Como selector
 % version(_, _, Contenido, [0, [14, 12, 2021], "Primer contenido del Doc"]).
 
+modificarIDversion(VersionAntigua, IDnuevo, VersionNueva):-
+    version(_, Fecha, Contenido, VersionAntigua),
+    version(IDnuevo, Fecha, Contenido, VersionNueva).
+
+% Como modificador
+% modificarIDversion([3, [14, 12, 2021], "Primer contenido del Doc"], 0, NuevaVersion).
+
 % paradigmaDocsRegister
 
 paradigmaDocsRegister(ParadigmaDocs, [DD, MM, YYYY], NombreUsuario, ContraseniaUsuario, ActParadigmaDocs):-
@@ -207,6 +214,17 @@ paradigmaDocsAdd(ParadigmaDocs, IDdocumento, Fecha, ContenidoTexto, ActParadigma
 % paradigmaDocsAdd(["google docs", [20, 12, 2015], [[[1, 12, 2021], "vflores", "hola123", 1], [[3, 12, 2021], "alopez", "asdfg", 0], [[1, 12, 2021], "crios", "qwert", 0]], [[0, "archivo 1", "vflores", [1, 12, 2021], [[0, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"], [1, [19, 12, 2021], "Este es el segundo texto y/o contenido"]], []]]], 0, [19, 12, 2021], "Este es el tercer texto y/o contenido", ActParadigmaDocs).
 
 
+/*
+paradigmaDocsRestoreVersion(ParadigmaDocs, IDdocumento, IDversion, ActParadigmaDocs):-
+	paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuarios, ListaDocumentos, ParadigmaDocs),
+    exist([_, _, _, 1], ListaUsuarios),
+    extraer([FechaUsuario, NombreUsuario, ContraseniaUsuario, 1], ListaUsuarios, USUARIO),
+    borrarElemento(USUARIO, ListaUsuarios, ActListaUsuarios),
+	usuario(FechaUsuario, NombreUsuario, ContraseniaUsuario, 0, ACTUSUARIO),
+	insertarAlPrincipio(ACTUSUARIO, ActListaUsuarios, ListaUsuariosFinal),
+    exist([IDdocumento, _, NombreUsuario, _, _, _], ListaDocumentos),
+    extraer([IDdocumento, NombreDocumento, _, FechaCreacionDocumento, ListaVersiones, ListaAccesos], ListaDocumentos, Documento),    
+	*/
 
 
 
@@ -216,11 +234,14 @@ paradigmaDocsAdd(ParadigmaDocs, IDdocumento, Fecha, ContenidoTexto, ActParadigma
 
 
 
-usuarioOcompartido(Usuario, IDdocumento, ListaDocumentos, ListaAccesos):-
-    exist([IDdocumento, Usuario, _, _, _, _], ListaDocumentos),
-    !;
-    exist([Usuario, "W"], ListaAccesos),
-    !.
+
+
+
+
+
+
+
+
 
 
 
@@ -306,3 +327,18 @@ combinador(Elemento, [Cabeza1|Resto1], Lista, [[Elemento|Cabeza1]|Resto2]) :-
 concatenar([], Lista, Lista).
 concatenar([Cabeza|Resto], Lista, [Cabeza|ListaFinal]):-
     concatenar(Resto, Lista, ListaFinal).
+
+correlativo([], Acum, Acum).
+correlativo([Cabeza|Resto], Acum, VersionCorrelativa):-
+    largoLista(Resto, IDversion),
+    modificarIDversion(Cabeza, IDversion, Act),
+    insertarAlPrincipio(Act, Acum, V),
+    correlativo(Resto, V, VersionCorrelativa).
+% Ej: correlativo([[100, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"], [200, [19, 12, 2021], "Este es el segundo texto y/o contenido"], [300, [19, 12, 2021], "Este es el tercer texto y/o contenido"]], Acumulador, VersionesCorrelativas).
+
+
+usuarioOcompartido(Usuario, IDdocumento, ListaDocumentos, ListaAccesos):-
+    exist([IDdocumento, _, Usuario, _, _, _], ListaDocumentos),
+    !;
+    exist([Usuario, "W"], ListaAccesos),
+    !.
