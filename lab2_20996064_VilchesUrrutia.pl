@@ -246,6 +246,38 @@ paradigmaDocsRestoreVersion(ParadigmaDocs, IDdocumento, IDversion, ActParadigmaD
 
 
 
+%paradigmaDocsToString(ParadigmaDocs, ActParadigmaDocs):-
+
+fechaToString(Fecha, FechaString):-
+    date(DD, MM, YYYY, Fecha),
+    number_string(DD, DiaString),
+    number_string(MM, MesString),
+    number_string(YYYY, AnioString),
+    atomics_to_string([DiaString, "-", MesString,"-", AnioString], FechaString).
+
+% Ejemplo:
+% fechaToString([3, 12, 2021], FechaString).
+
+usuarioToString([NombreUsuario, FechaCreacion], UsuarioString):-
+    string_concat("Nombre de usuario: ", NombreUsuario, NombreUsuarioString),
+    fechaToString(FechaCreacion, FechaString),
+    string_concat("Fecha de creacion: ", FechaString, FechaCreacionString),
+    atomics_to_string([NombreUsuarioString, FechaCreacionString], "\n",
+                      UsuarioString).
+    
+% Ejemplo:
+% usuarioToString(["Jaime", [3, 12, 2021]], UsuarioString).
+
+versionToString([IDversion, [DD, MM, YYYY], Contenido], VersionString):-
+    number_string(IDversion, IDversionString),
+    fechaToString([DD, MM, YYYY], FechaString),
+    atomics_to_string(["Nro. Version: ", IDversionString, '\n',
+                      "Fecha de creacion: ", FechaString, '\n',
+                      "Contenido: ", Contenido], VersionString).
+
+% Ejemplo:
+% version(0, [14, 12, 2021], "Primer contenido del Doc", PrimeraVersionDoc), versionToString(PrimeraVersionDoc, VersionString).
+
 
 
 
