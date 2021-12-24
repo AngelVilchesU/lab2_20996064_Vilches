@@ -246,6 +246,7 @@ paradigmaDocsRestoreVersion(ParadigmaDocs, IDdocumento, IDversion, ActParadigmaD
 
 
 
+
 %paradigmaDocsToString(ParadigmaDocs, ActParadigmaDocs):-
 
 fechaToString(Fecha, FechaString):-
@@ -268,19 +269,64 @@ usuarioToString([NombreUsuario, FechaCreacion], UsuarioString):-
 % Ejemplo:
 % usuarioToString(["Jaime", [3, 12, 2021]], UsuarioString).
 
+versionToString([], "").
 versionToString([IDversion, [DD, MM, YYYY], Contenido], VersionString):-
     number_string(IDversion, IDversionString),
     fechaToString([DD, MM, YYYY], FechaString),
     atomics_to_string(["Nro. Version: ", IDversionString, '\n',
                       "Fecha de creacion: ", FechaString, '\n',
-                      "Contenido: ", Contenido], VersionString).
+                      "Contenido: ", Contenido, '\n'], VersionString).
 
 % Ejemplo:
 % version(0, [14, 12, 2021], "Primer contenido del Doc", PrimeraVersionDoc), versionToString(PrimeraVersionDoc, VersionString).
 
+versionesToString([], Acum, Acum).
+versionesToString([Cabeza|Resto], Acum, VersionesString):-
+    versionToString(Cabeza, VersionString),
+    string_concat(VersionString, Acum, Aux),
+    versionesToString(Resto, Aux, VersionesString).
+    
+% Ejemplo:
+% versionesToString([[0, [19, 12, 2021], "Este es el tercer texto y/o contenido"], [1, [19, 12, 2021], "Este es el segundo texto y/o contenido"], [2, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"]], "", VersionesString).
+
+accesoToString([], "").
+accesoToString([Usuario, Acceso], AccesoString):-
+    atomics_to_string(["Usuario Compartido: ", Usuario, ";", " Acceso: ", Acceso, '\n'], AccesoString).
+
+% Ejemplo:
+% accesoToString(["crios", "W"], AccesoString).
+
+accesosToString([], Acum, Acum).
+accesosToString([Cabeza|Resto], Acum, AccesosString):-
+    accesoToString(Cabeza, AccesoString),
+    string_concat(AccesoString, Acum, Aux),
+    accesosToString(Resto, Aux, AccesosString).
+
+% Ejemplo:
+% accesosToString([["crios", "W"], ["crios", "R"]], "", AccesosString).
 
 
+documentoToString([IDdocumento, NombreDocumento, Autor, [DD, MM, YYYY], ListaVersiones, ListaAccesos], DocumentoString):-
+	number_string(IDdocumento, IDdocumentoString),
+	fechaToString([DD, MM, YYYY], FechaString),
+  	versionesToString(ListaVersiones, "", VersionesString),
+    accesosToString(ListaAccesos, "", AccesosString),
+    atomics_to_string(["Nro. version: ", IDdocumentoString, '\n',
+                       "Nombre documento: ", NombreDocumento, '\n',
+                       "Autor: ", Autor, '\n',
+                       "Fecha creacion documento: ", FechaString, '\n',
+                       VersionesString, '\n',
+                       AccesosString, '\n'], DocumentoString).
+    
+% Ejemplo:
+% documentoToString([0, "archivo 1", "vflores", [1, 12, 2021], [[0, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"], [1, [19, 12, 2021], "Este es el tercer texto y/o contenido"], [2, [19, 12, 2021], "Este es el segundo texto y/o contenido"]], []], DocumentoString).
 
+
+documentosToString([], Acum, Acum).
+documentosToString([Cabeza|Resto], Acum, DocumentosString):-
+    documentoToString(Cabeza, DocumentoString),
+    string_concat(DocumentoString, Acum, Aux),
+    documentosToString(Resto, Aux, DocumentosString).
 
 
 
