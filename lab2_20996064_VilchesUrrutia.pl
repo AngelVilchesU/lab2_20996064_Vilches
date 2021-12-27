@@ -106,7 +106,7 @@ usuarioToString([[DD, MM, YYYY], NombreUsuario, _, _], UsuarioString):-
                       UsuarioString).
     
 % Ejemplo:
-% usuarioToString(["Jaime", [3, 12, 2021]], UsuarioString).
+% usuarioToString([[14, 12, 2021], "USER1", "PASS1", 0], UsuarioString).
 
 % Dominio: Se emplea una lista contenedora de datos del tipo usuario, un acumulador ("") y una variable (contenedor del string de todos los Usuarios)
 % Predicado: usuarioToString(Usuario, UsuarioString).
@@ -224,7 +224,8 @@ version(IDversion, [DD, MM, YYYY], Contenido, [IDversion, [DD, MM, YYYY], Conten
 % version(_, _, Contenido, [0, [14, 12, 2021], "Primer contenido del Doc"]).
 
 % Dominio: Se emplea un dato del tipo version (a cambiar), un enterio (ID) y una variable (contenedor del nuevo dato tipo Version)
-% Predicado: version(Version, NuevaVersion).
+% Predicado: modificarIDversion(ListaVersionAntigua, IDnuevo, ListaVersionNueva).
+%            version(Version, ContenedorVersion).
 % Meta primaria: modificarIDversion
 % Meta secundaria (no nativa): version
 % Descripción: La regla permite la modificación del ID de un datos tipos Version
@@ -264,14 +265,15 @@ versionesToString([Cabeza|Resto], Acum, VersionesString):-
     versionToString(Cabeza, VersionString),
     string_concat(VersionString, Acum, Aux),
     versionesToString(Resto, Aux, VersionesString).
-    
-% Ejemplo:
-% versionesToString([[0, [19, 12, 2021], "Este es el tercer texto y/o contenido"], [1, [19, 12, 2021], "Este es el segundo texto y/o contenido"], [2, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"]], "", VersionesString).
-
 
 
 
 % Requerimientos Funcionales
+
+
+
+
+
 
 
 
@@ -299,36 +301,6 @@ paradigmaDocsRegister(ParadigmaDocs, [DD, MM, YYYY], NombreUsuario, ContraseniaU
     insertarAlPrincipio(USUARIO, ListaUsuarios, ActListaUsuarios),
     paradigmaDocs(NombrePlataforma, FechaCreacion, _, ListaDocumentos, ParadigmaDocs),
     paradigmaDocs(NombrePlataforma, FechaCreacion, ActListaUsuarios, ListaDocumentos, ActParadigmaDocs).
-
-% Ejemplo 1:
-/* 
-date(25, 12, 2021, D1), date(24, 12, 2021, D2), date(23, 12, 2021, D3), paradigmaDocs("Google docs", D1, [], [], PD1),
-paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
-paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
-paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6).
-*/
-% Ejemplo 2 (registrar un usuario con nombre de usuario ya registrado -> caso no válido):
-/*
-date(25, 12, 2021, D1), date(24, 12, 2021, D2), date(23, 12, 2021, D3), paradigmaDocs("Google docs", D1, [], [], PD1),
-paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
-paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
-paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6),
-paradigmaDocsRegister(PD6, D2, "Jaime Loyola", "Ya existe el este nombre de usuario", PD7).
-*/
-% Ejemplo 3 (La salida de paradigmaDocs corresponde a la salida correcta, es decir, existe y es validada en el proceso):
-/*
-paradigmaDocsRegister(["Google docs", [25, 12, 2021], [[[23, 12, 2021], "Aranzazu Huerta", "SUS", 0],
-[[23, 12, 2021], "Catalina Vergara", "cale", 0], [[24, 12, 2021], "Benjamin Navarro", "naarro", 0],
-[[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]], []], [23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio",
-["Google docs", [25, 12, 2021], [[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0],
-[[23, 12, 2021], "Aranzazu Huerta", "SUS", 0], [[23, 12, 2021], "Catalina Vergara", "cale", 0],
-[[24, 12, 2021], "Benjamin Navarro", "naarro", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]], []]).
-*/
-
-
-
-
-
 
 
 
@@ -365,31 +337,11 @@ paradigmaDocsLogin(ParadigmaDocs, NombreUsuario, ContraseniaUsuario, ActParadigm
     insertarAlPrincipio(ACTUSUARIO, ActListaUsuarios, ListaUsuariosFinal),
     paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuariosFinal, ListaDocumentos, ActParadigmaDocs).
 
-% Ejemplo 1:
-/*
-date(25, 12, 2021, D1), date(24, 12, 2021, D2), date(23, 12, 2021, D3), paradigmaDocs("Google docs", D1, [], [], PD1),
-paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
-paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
-paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6), paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7).
-*/
-% Ejemplo 2 (contraseña incorrecta -> caso no válido):
-/*
-date(25, 12, 2021, D1), date(24, 12, 2021, D2), date(23, 12, 2021, D3), paradigmaDocs("Google docs", D1, [], [], PD1),
-paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
-paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
-paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6),
-paradigmaDocsLogin(PD6, "Benjamin Navarro", "contrasenia incorrecta", PD7).
-*/
-% Ejemplo 3 (La salida de paradigmaDocs corresponde a la salida correcta, es decir, existe y es validada en el proceso):
-/*
-paradigmaDocsLogin(["Google docs", [25, 12, 2021], [[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0],
-[[23, 12, 2021], "Aranzazu Huerta", "SUS", 0], [[23, 12, 2021], "Catalina Vergara", "cale", 0],
-[[24, 12, 2021], "Benjamin Navarro", "naarro", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]], []],
-"Benjamin Navarro", "naarro",
-["Google docs", [25, 12, 2021], [[[24, 12, 2021], "Benjamin Navarro", "naarro", 1],
-[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0], [[23, 12, 2021], "Aranzazu Huerta", "SUS", 0],
-[[23, 12, 2021], "Catalina Vergara", "cale", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]], []]).
-*/
+
+
+
+
+
 
 
 
@@ -442,46 +394,6 @@ paradigmaDocsCreate(ParadigmaDocs, FechaCreacionDocumento, NombreDocumento, Cont
     paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuariosFinal, ListaDocumentosFinal, ActParadigmaDocs).
 
 
-% Ejemplo 1:
-/*
-date(25, 12, 2021, D1), date(24, 12, 2021, D2), date(23, 12, 2021, D3), paradigmaDocs("Google docs", D1, [], [], PD1),
-paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
-paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
-paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6), paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
-paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
-paradigmaDocsLogin(PD8, "Catalina Vergara", "cale", PD9),
-paradigmaDocsCreate(PD9, D2, "Documento 1", "Primer contenido del Documento con ID 1", PD10),
-paradigmaDocsLogin(PD10, "Jaime Loyola", "pinturaseca123", PD11),
-paradigmaDocsCreate(PD11, D3, "Documento 2", "Primer contenido del Documento con ID 2", PD12).
-*/
-% Ejemplo 2 (no hay sesión activa -> caso no válido):
-/*
-date(25, 12, 2021, D1), date(24, 12, 2021, D2), date(23, 12, 2021, D3), paradigmaDocs("Google docs", D1, [], [], PD1),
-paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
-paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
-paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6),
-paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8).
-*/
-% Ejemplo 3 (La salida de paradigmaDocs corresponde a la salida correcta, es decir, existe y es validada en el proceso):
-/*
-paradigmaDocsCreate(["Google docs", [25, 12, 2021], [[[24, 12, 2021], "Benjamin Navarro", "naarro", 1],
-[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0], [[23, 12, 2021], "Aranzazu Huerta", "SUS", 0],
-[[23, 12, 2021], "Catalina Vergara", "cale", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]], []],
-[23, 12, 2021], "Documento 0", "Primer contenido del Documento con ID 0",
-["Google docs", [25, 12, 2021], [[[24, 12, 2021], "Benjamin Navarro", "naarro", 0],
-[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0], [[23, 12, 2021], "Aranzazu Huerta", "SUS", 0],
-[[23, 12, 2021], "Catalina Vergara", "cale", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]],
-[[0, "Documento 0", "Benjamin Navarro", [23, 12, 2021], [[0, [23, 12, 2021], "Primer contenido del Documento con ID 0"]], []]]]).
-*/
-
-
-
-
-
-
-
-
-
 
 
 
@@ -532,49 +444,9 @@ paradigmaDocsShare(ParadigmaDocs, IDdocumento, ListaPermisos, ListaUsuariosCompa
     insertarAlPrincipio(DocumentoFinal, ActListaDocumentos, ListaDocumentosFinal),
     paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuariosFinal, ListaDocumentosFinal, ActParadigmaDocs).
 
-% Ejemplo 1:
-/*
-date(25, 12, 2021, D1), date(24, 12, 2021, D2), date(23, 12, 2021, D3), paradigmaDocs("Google docs", D1, [], [], PD1),
-paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
-paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
-paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6), paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
-paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
-paradigmaDocsLogin(PD8, "Catalina Vergara", "cale", PD9),
-paradigmaDocsCreate(PD9, D2, "Documento 1", "Primer contenido del Documento con ID 1", PD10),
-paradigmaDocsLogin(PD10, "Jaime Loyola", "pinturaseca123", PD11),
-paradigmaDocsCreate(PD11, D3, "Documento 2", "Primer contenido del Documento con ID 2", PD12),
-paradigmaDocsLogin(PD12, "Benjamin Navarro", "naarro", PD13),
-paradigmaDocsShare(PD13, 0, ["R", "W", "C"], ["Aranzazu Huerta", "Gonzalo Marambio"], PD14),
-paradigmaDocsLogin(PD14, "Catalina Vergara", "cale", PD15),
-paradigmaDocsShare(PD15, 1, ["W", "C"], ["Jaime Loyola", "Benjamin Navarro"], PD16).
-*/
-% Ejemplo 2 (no hay sesión activa -> caso no válido):
-/*
-date(25, 12, 2021, D1), date(24, 12, 2021, D2), date(23, 12, 2021, D3), paradigmaDocs("Google docs", D1, [], [], PD1),
-paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
-paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
-paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6), paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
-paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
-paradigmaDocsLogin(PD8, "Catalina Vergara", "cale", PD9),
-paradigmaDocsCreate(PD9, D2, "Documento 1", "Primer contenido del Documento con ID 1", PD10),
-paradigmaDocsLogin(PD10, "Jaime Loyola", "pinturaseca123", PD11),
-paradigmaDocsCreate(PD11, D3, "Documento 2", "Primer contenido del Documento con ID 2", PD12),
-paradigmaDocsShare(PD12, 0, ["R", "W", "C"], ["Aranzazu Huerta", "Gonzalo Marambio"], PD13).
-*/
-% Ejemplo 3 (La salida de paradigmaDocs corresponde a la salida correcta, es decir, existe y es validada en el proceso):
-/*
-paradigmaDocsShare( ["Google docs", [25, 12, 2021], [[[23, 12, 2021], "Catalina Vergara", "cale", 0],
-[[24, 12, 2021], "Benjamin Navarro", "naarro", 1], [[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0],
-[[23, 12, 2021], "Aranzazu Huerta", "SUS", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]],
-[[0, "Documento 0", "Benjamin Navarro", [23, 12, 2021], [[0, [23, 12, 2021], "Primer contenido del Documento con ID 0"]], []]]],
-0, ["R", "W", "C"], ["Aranzazu Huerta", "Gonzalo Marambio"], 
-["Google docs", [25, 12, 2021], [[[24, 12, 2021], "Benjamin Navarro", "naarro", 0],
-[[23, 12, 2021], "Catalina Vergara", "cale", 0], [[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0],
-[[23, 12, 2021], "Aranzazu Huerta", "SUS", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]],
-[[0, "Documento 0", "Benjamin Navarro", [23, 12, 2021], [[0, [23, 12, 2021], "Primer contenido del Documento con ID 0"]],
-[["Aranzazu Huerta", "R"], ["Aranzazu Huerta", "W"], ["Aranzazu Huerta", "C"], ["Gonzalo Marambio", "R"],
-["Gonzalo Marambio", "W"], ["Gonzalo Marambio", "C"]]]]]).
-*/
+
+
+
 
 
 
@@ -635,67 +507,6 @@ paradigmaDocsAdd(ParadigmaDocs, IDdocumento, Fecha, ContenidoTexto, ActParadigma
     insertarAlPrincipio(DocumentoFinal, ActListaDocumentos, ListaDocumentosFinal),
     paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuariosFinal, ListaDocumentosFinal, ActParadigmaDocs).
 
-% Ejemplo 1:
-/*
-date(25, 12, 2021, D1), date(24, 12, 2021, D2), date(23, 12, 2021, D3), paradigmaDocs("Google docs", D1, [], [], PD1),
-paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
-paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
-paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6), 
-paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
-paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
-paradigmaDocsLogin(PD8, "Catalina Vergara", "cale", PD9),
-paradigmaDocsCreate(PD9, D2, "Documento 1", "Primer contenido del Documento con ID 1", PD10),
-paradigmaDocsLogin(PD10, "Jaime Loyola", "pinturaseca123", PD11),
-paradigmaDocsCreate(PD11, D3, "Documento 2", "Primer contenido del Documento con ID 2", PD12),
-paradigmaDocsLogin(PD12, "Benjamin Navarro", "naarro", PD13),
-paradigmaDocsShare(PD13, 0, ["R", "W", "C"], ["Aranzazu Huerta", "Gonzalo Marambio"], PD14),
-paradigmaDocsLogin(PD14, "Catalina Vergara", "cale", PD15),
-paradigmaDocsShare(PD15, 1, ["W", "C"], ["Jaime Loyola", "Benjamin Navarro"], PD16),
-paradigmaDocsLogin(PD16, "Benjamin Navarro", "naarro", PD17),
-paradigmaDocsAdd(PD17, 0, [25, 12, 2021], ". Segundo contenido del Documento con ID 0.", PD18),
-paradigmaDocsLogin(PD18, "Catalina Vergara", "cale", PD19),
-paradigmaDocsAdd(PD19, 1, [25, 12, 2021], ". Segundo contenido del Documento con ID 1.", PD20),
-paradigmaDocsLogin(PD20, "Benjamin Navarro", "naarro", PD21),
-paradigmaDocsAdd(PD21, 0, [25, 12, 2021], " Tercer contenido del Documento con ID 0.", PD22).
-*/
-% Ejemplo 2 (usuario no autorizado (ni autor ni compartido) quiere realizar un cambio sobre un documento -> caso no válido):
-/*
-date(25, 12, 2021, D1), date(24, 12, 2021, D2), date(23, 12, 2021, D3),
-paradigmaDocs("Google docs", D1, [], [], PD1),
-paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2),
-paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
-paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4),
-paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
-paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6),
-paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
-paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
-paradigmaDocsLogin(PD8, "Catalina Vergara", "cale", PD9),
-paradigmaDocsCreate(PD9, D2, "Documento 1", "Primer contenido del Documento con ID 1", PD10),
-paradigmaDocsLogin(PD10, "Jaime Loyola", "pinturaseca123", PD11),
-paradigmaDocsCreate(PD11, D3, "Documento 2", "Primer contenido del Documento con ID 2", PD12),
-paradigmaDocsLogin(PD12, "Benjamin Navarro", "naarro", PD13),
-paradigmaDocsShare(PD13, 0, ["R", "W", "C"], ["Aranzazu Huerta", "Gonzalo Marambio"], PD14),
-paradigmaDocsLogin(PD14, "Catalina Vergara", "cale", PD15),
-paradigmaDocsShare(PD15, 1, ["W", "C"], ["Jaime Loyola", "Benjamin Navarro"], PD16),
-paradigmaDocsLogin(PD16, "Jaime Loyola", "pinturaseca123", PD17),
-paradigmaDocsAdd(PD17, 0, [25, 12, 2021], ". Segundo contenido del Documento con ID 0.", PD18).
-*/
-% Ejemplo 3 (La salida de paradigmaDocs corresponde a la salida correcta, es decir, existe y es validada en el proceso):
-/*
-paradigmaDocsAdd(["Google docs", [25, 12, 2021], [[[23, 12, 2021], "Catalina Vergara", "cale", 0],
-[[24, 12, 2021], "Benjamin Navarro", "naarro", 1], [[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0],
-[[23, 12, 2021], "Aranzazu Huerta", "SUS", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]],
-[[0, "Documento 0", "Benjamin Navarro", [23, 12, 2021], [[0, [23, 12, 2021], "Primer contenido del Documento con ID 0"]], []]]],
-0, [23, 12, 2021], ". Segundo contenido del Documento con ID 0.",
-["Google docs", [25, 12, 2021], [[[24, 12, 2021], "Benjamin Navarro", "naarro", 0], [[23, 12, 2021], "Catalina Vergara", "cale", 0],
-[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0], [[23, 12, 2021], "Aranzazu Huerta", "SUS", 0],
-[[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]],
-[[0, "Documento 0", "Benjamin Navarro", [23, 12, 2021], [[0, [23, 12, 2021], "Primer contenido del Documento con ID 0"],
-[1, [23, 12, 2021], "Primer contenido del Documento con ID 0. Segundo contenido del Documento con ID 0."]], []]]]).
-*/
-
-
-
 
 
 
@@ -750,85 +561,6 @@ paradigmaDocsRestoreVersion(ParadigmaDocs, IDdocumento, IDversion, ActParadigmaD
 	insertarAlPrincipio(ActDocumento, ActListaDocumentos, ListaDocumentosFinal),
     paradigmaDocs(NombrePlataforma, FechaCreacion, ListaUsuariosFinal, ListaDocumentosFinal, ActParadigmaDocs).
 
-% Ejemplo 1:
-/*
-date(25, 12, 2021, D1), date(24, 12, 2021, D2), date(23, 12, 2021, D3), paradigmaDocs("Google docs", D1, [], [], PD1),
-paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
-paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
-paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6), 
-paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
-paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
-paradigmaDocsLogin(PD8, "Catalina Vergara", "cale", PD9),
-paradigmaDocsCreate(PD9, D2, "Documento 1", "Primer contenido del Documento con ID 1", PD10),
-paradigmaDocsLogin(PD10, "Jaime Loyola", "pinturaseca123", PD11),
-paradigmaDocsCreate(PD11, D3, "Documento 2", "Primer contenido del Documento con ID 2", PD12),
-paradigmaDocsLogin(PD12, "Benjamin Navarro", "naarro", PD13),
-paradigmaDocsShare(PD13, 0, ["R", "W", "C"], ["Aranzazu Huerta", "Gonzalo Marambio"], PD14),
-paradigmaDocsLogin(PD14, "Catalina Vergara", "cale", PD15),
-paradigmaDocsShare(PD15, 1, ["W", "C"], ["Jaime Loyola", "Benjamin Navarro"], PD16),
-paradigmaDocsLogin(PD16, "Benjamin Navarro", "naarro", PD17),
-paradigmaDocsAdd(PD17, 0, [25, 12, 2021], ". Segundo contenido del Documento con ID 0.", PD18),
-paradigmaDocsLogin(PD18, "Catalina Vergara", "cale", PD19),
-paradigmaDocsAdd(PD19, 1, [25, 12, 2021], ". Segundo contenido del Documento con ID 1.", PD20),
-paradigmaDocsLogin(PD20, "Benjamin Navarro", "naarro", PD21),
-paradigmaDocsAdd(PD21, 0, [25, 12, 2021], " Tercer contenido del Documento con ID 0.", PD22),
-paradigmaDocsLogin(PD22, "Benjamin Navarro", "naarro", PD23),
-paradigmaDocsRestoreVersion(PD23, 0, 0, PD24).
-*/
-% Ejemplo 2 (usuario, más no autor, quiere restaurar una versión de un documento -> caso no válido):
-/*
-date(25, 12, 2021, D1), date(24, 12, 2021, D2),date(23, 12, 2021, D3), 
-paradigmaDocs("Google docs", D1, [], [], PD1), paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2),
-paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3), paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4),
-paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5), paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6),
-paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
-paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
-paradigmaDocsLogin(PD8, "Catalina Vergara", "cale", PD9),
-paradigmaDocsCreate(PD9, D2, "Documento 1", "Primer contenido del Documento con ID 1", PD10),
-paradigmaDocsLogin(PD10, "Jaime Loyola", "pinturaseca123", PD11),
-paradigmaDocsCreate(PD11, D3, "Documento 2", "Primer contenido del Documento con ID 2", PD12),
-paradigmaDocsLogin(PD12, "Benjamin Navarro", "naarro", PD13),
-paradigmaDocsShare(PD13, 0, ["R", "W", "C"], ["Aranzazu Huerta", "Gonzalo Marambio"], PD14),
-paradigmaDocsLogin(PD14, "Catalina Vergara", "cale", PD15),
-paradigmaDocsShare(PD15, 1, ["W", "C"], ["Jaime Loyola", "Benjamin Navarro"], PD16),
-paradigmaDocsLogin(PD16, "Benjamin Navarro", "naarro", PD17),
-paradigmaDocsAdd(PD17, 0, [25, 12, 2021], ". Segundo contenido del Documento con ID 0.", PD18),
-paradigmaDocsLogin(PD18, "Catalina Vergara", "cale", PD19),
-paradigmaDocsAdd(PD19, 1, [25, 12, 2021], ". Segundo contenido del Documento con ID 1.", PD20),
-paradigmaDocsLogin(PD20, "Benjamin Navarro", "naarro", PD21),
-paradigmaDocsAdd(PD21, 0, [25, 12, 2021], " Tercer contenido del Documento con ID 0.", PD22),
-paradigmaDocsLogin(PD22, "Catalina Vergara", "cale", PD23), paradigmaDocsRestoreVersion(PD23, 0, 0, PD24).
-*/
-% Ejemplo 3:
-/*
-paradigmaDocsRestoreVersion(["Google docs", [25, 12, 2021], [[[24, 12, 2021], "Benjamin Navarro", "naarro", 1],
-[[23, 12, 2021], "Catalina Vergara", "cale", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0],
-[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0], [[23, 12, 2021], "Aranzazu Huerta", "SUS", 0]],
-[[0, "Documento 0", "Benjamin Navarro", [23, 12, 2021], [[0, [23, 12, 2021], "Primer contenido del Documento con ID 0"],
-[1, [25, 12, 2021], "Primer contenido del Documento con ID 0. Segundo contenido del Documento con ID 0."],
-[2, [25, 12, 2021],
-"Primer contenido del Documento con ID 0. Segundo contenido del Documento con ID 0. Tercer contenido del Documento con ID 0."]],
-[["Aranzazu Huerta", "R"], ["Aranzazu Huerta", "W"], ["Aranzazu Huerta", "C"], ["Gonzalo Marambio", "R"], ["Gonzalo Marambio", "W"],
-["Gonzalo Marambio", "C"]]], [1, "Documento 1", "Catalina Vergara", [24, 12, 2021], [[0, [24, 12, 2021],
-"Primer contenido del Documento con ID 1"], [1, [25, 12, 2021],
-"Primer contenido del Documento con ID 1. Segundo contenido del Documento con ID 1."]], [["Jaime Loyola", "W"],
-["Jaime Loyola", "C"], ["Benjamin Navarro", "W"], ["Benjamin Navarro", "C"]]], [2, "Documento 2", "Jaime Loyola", [23, 12, 2021],
-[[0, [23, 12, 2021], "Primer contenido del Documento con ID 2"]], []]]], 0, 0, ["Google docs", [25, 12, 2021], [[[24, 12, 2021],
-"Benjamin Navarro", "naarro", 0], [[23, 12, 2021], "Catalina Vergara", "cale", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0],
-[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0], [[23, 12, 2021], "Aranzazu Huerta", "SUS", 0]],
-[[0, "Documento 0", "Benjamin Navarro", [23, 12, 2021], [[0, [25, 12, 2021],
-"Primer contenido del Documento con ID 0. Segundo contenido del Documento con ID 0."], [1, [25, 12, 2021],
-"Primer contenido del Documento con ID 0. Segundo contenido del Documento con ID 0. Tercer contenido del Documento con ID 0."],
-[2, [23, 12, 2021], "Primer contenido del Documento con ID 0"]], [["Aranzazu Huerta", "R"], ["Aranzazu Huerta", "W"],
-["Aranzazu Huerta", "C"], ["Gonzalo Marambio", "R"], ["Gonzalo Marambio", "W"], ["Gonzalo Marambio", "C"]]],
-[1, "Documento 1", "Catalina Vergara", [24, 12, 2021], [[0, [24, 12, 2021], "Primer contenido del Documento con ID 1"],
-[1, [25, 12, 2021], "Primer contenido del Documento con ID 1. Segundo contenido del Documento con ID 1."]], [["Jaime Loyola", "W"],
-["Jaime Loyola", "C"], ["Benjamin Navarro", "W"], ["Benjamin Navarro", "C"]]], [2, "Documento 2", "Jaime Loyola", [23, 12, 2021],
-[[0, [23, 12, 2021], "Primer contenido del Documento con ID 2"]], []]]]).
-*/
-
-
-
 
 
 
@@ -874,11 +606,589 @@ paradigmaDocsToString([NombrePlataforma, [DD, MM, YYYY], ListaUsuarios, ListaDoc
                         UsuariosString, '\n',
                         DocumentosString, '\n'], ActParadigmaDocs).
 
+
+
+
+
+
+
+
+
+
+    
+
+
+% Otros Predicados
+
+% Dominio: Se emplea un elemento de cualquier tipo y una lista
+% Predicado: exist(Elemento, ListaDeElementos).
+% Meta primaria: exist
+% Descripción: La regla permite verificar la existencia (o no) de un elemento en una lista
+
+exist(Elemento, [Elemento|_]):-
+    !.
+exist(Elemento, [_|Resto]):-
+    exist(Elemento, Resto).
+
+% Dominio: Se emplea un elemento de cualquier tipo, una lista y una variable (contenedor Resultado)
+% Predicado: insertarAlPrincipio(Elemento, Lista, ListaRetorno).
+% Meta primaria: insertarAlPrincipio
+% Descripción: La regla permite insertar un elemento a la cabeza de una lista
+
+insertarAlPrincipio(Elemento, [], [Elemento]):-
+    !.
+insertarAlPrincipio(Elemento, Lista, [Elemento|Lista]).
+
+% Dominio: Se emplea un elemento de cualquier tipo, una lista y una variable (contenedor Elemento)
+% Predicado: extraer(Elemento, ListaDeElementos, ElementoRetorno).
+% Meta primaria: extraer
+% Descripción: La regla permite desglosar y/o obtener un elemento especifico de una lista de elementos
+
+extraer(Elemento, [Elemento|_], Elemento):-
+    !.
+extraer(Elemento, [_|Resto], Elemento):-
+    extraer(Elemento, Resto, Elemento).
+
+% Dominio: Se emplea un elemento de cualquier tipo, una lista y una variable (contenedor Resto)
+% Predicado: borrarElemento(Elemento, ListaDeElementos, ListaResto).
+% Meta primaria: borrarElemento
+% Descripción: La regla permite remover un elemento especifico de una lista de elementos
+
+borrarElemento(Elemento, [Elemento|Resto], Resto):-
+    !.
+borrarElemento(Elemento, [Cabeza|Resto], [Cabeza|Retorno]):-
+    borrarElemento(Elemento, Resto, Retorno).
+
+% Dominio: Se emplea un elemento de cualquier tipo, una lista y una variable (contenedor Lista)
+% Predicado: insertarAlFinal(Elemento, ListaDeElementos, ListaNueva).
+% Meta primaria: insertarAlFinal
+% Descripción: La regla permite insertar un elemento al final de una lista de elementos
+
+insertarAlFinal(Elemento, [], [Elemento]):-
+    !.
+insertarAlFinal(Elemento, [Cabeza|Resto], [Cabeza|Lista]):-
+    insertarAlFinal(Elemento, Resto, Lista).
+
+% Dominio: Se emplea una lista y una variable (contenedor Largo)
+% Predicado: largoLista(ListaDeElementos, Largo).
+% Meta primaria: largoLista
+% Descripción: La regla permite obtener el largo de una lista
+
+largoLista([], 0).
+largoLista([_|Resto], Largo):-
+    largoLista(Resto, LargoAcum),
+    Largo is LargoAcum + 1.
+
+% Dominio: Se emplea una lista de listas y una variable (contenedor Combinaciones)
+% Predicado: productoLista(ListaDeListas, Combinaciones).
+%            producto(Lista, ListaDeListas, Acum).
+% Meta primaria: productoLista
+% Meta secundaria: producto
+% Descripción: La regla permite obtener las distintas combinaciones pares de acuerdo a listas de listas...
+%              ... (orientado al requerimiento funcional paradigmaDocsShare)
+
+% Si es una lista de un elemento...
+% Ej: productoLista([["u1"]], Combinaciones).
+productoLista([[Cabeza]], [[Cabeza]]):-
+    !.
+% Si es una lista de mas de un elemento...
+% Ej: productoLista([["u1", "u5"]], Combinaciones).
+productoLista([[Cabeza|Resto1]], [[Cabeza]|Resto2]) :- 
+    productoLista([Resto1], Resto2),
+    !.
+
+% Si son mas de una lista de elementos...
+% Ej: productoLista([["u1", "u5"], ["R", "W", "C"]], Combinaciones).
+productoLista([Cabeza|Resto1], Resto2) :-
+    productoLista(Resto1, R1),
+    producto(Cabeza, R1, Resto2),
+    !.
+
+% Dominio: Se emplea una lista, lista de listas y una variable (contenedor Acum)
+% Predicado: producto(Lista, ListaDeListas, Acum).
+%            combinador(Elemento, ListaDeListas, Lista, Combinacion).
+% Meta primaria: producto
+% Meta secundaria: combinador
+% Descripción: La regla permite obtener los productos de un elemento de la primera lista con los multiples ...
+%              ... existentes (o no) en las listas de listas
+
+% Caso base, no hay nada listas que "multiplicar"
+producto([], _, []):-
+    !.
+% Caso recursivo, hay elementos de listas que "multiplicar" con elementos de listas de listas
+% Ej: producto(["u1", "u5"], [["R"], ["W"], ["C"]], Producto).
+producto([Cabeza|Resto], ListadeListas, Acum) :-
+    producto(Resto, ListadeListas, Lista),
+    combinador(Cabeza, ListadeListas, Lista, Acum),
+    !.
+
+% Dominio: Se emplea un elemento (string), lista de listas, lista inicialmente vacia y una variable (contenedor Combinacion)
+% Predicado: combinador(Elemento, ListaDeListas, Lista, Combinacion).
+% Meta primaria: combinador
+% Descripción: La regla permite la "unión" del elemento ingresado con los elementos dentro de la lista de listas
+
+% Caso base, el primer elemento no puede "combinarse" con los elementos contenidos en la primera lista ya que no hay ninguno
+% Ej: combinador("u5", [], [], Com).
+combinador(_, [], Lista, Lista):-
+    !.
+% Caso recursivo, el primer elemento puede ser "combinado" aun con los elementos de la lista de listas
+% combinador("u5", [["R"], ["W"], ["C"]], [], Com).
+combinador(Elemento, [Cabeza1|Resto1], Lista, [[Elemento|Cabeza1]|Resto2]) :-
+    combinador(Elemento, Resto1, Lista, Resto2),
+    !.
+
+% Dominio: Se emplean dos listas y una variable (contenedor Concatenado)
+% Predicado: concatenar(Lista1, Lista2, ListasConcatenadas).
+% Meta primaria: concatenar
+% Descripción: La regla permite la concatenación de dos listas
+
+concatenar([], Lista, Lista).
+concatenar([Cabeza|Resto], Lista, [Cabeza|ListaFinal]):-
+    concatenar(Resto, Lista, ListaFinal).
+
+% Dominio: Se emplea un tipo de dato versión (lista) y dos variables (Acumulador y contenedor Correlativo)
+% Predicado: correlativo(ListaVersion, Lista, ListaVersionCorrelativa).
+%            largoLista(ListaDeElementos, Largo).
+%            modificarIDversion(ListaVersionAntigua, IDnuevo, ListaVersionNueva).
+%            insertarAlPrincipio(Elemento, Lista, ListaRetorno).
+% Meta primaria: correlativo
+% Metas secundarias: largoLista
+%                    modificarIDversion
+%                    insertarAlPrincipio
+% Descripción: La regla permite "ordenar" los identificadores de los tipo de datos version (lista) contenidos...
+%              ... en una lista de listas de forma correlativa (de 0 a N)
+
+correlativo([], Acum, Acum).
+correlativo([Cabeza|Resto], Acum, VersionCorrelativa):-
+    largoLista(Resto, IDversion),
+    modificarIDversion(Cabeza, IDversion, Act),
+    insertarAlPrincipio(Act, Acum, V),
+    correlativo(Resto, V, VersionCorrelativa).
+% Ej: correlativo([[100, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"], [200, [19, 12, 2021], "Este es el segundo texto y/o contenido"], [300, [19, 12, 2021], "Este es el tercer texto y/o contenido"]], Acumulador, VersionesCorrelativas).
+
+% Dominio: Se emplea un tipo de dato usuario, un entero y dos lista de listas, una del tipo de dato documento y otra de accesos
+% Predicado: usuarioOcompartidoEditar(Usuario, IDdocumento, ListaDocumentos, ListaAccesos).
+%            exist(Elemento, ListaDeElementos).
+% Meta primaria: usuarioOcompartidoEditar
+% Meta secundaria: exist
+% Descripción: La regla permite verificar si un usuario puede editar determinado documento de acuerdo a si este figura...
+%              ... como autor o le haya sido compartido con permiso de escritura
+
+usuarioOcompartidoEditar(Usuario, IDdocumento, ListaDocumentos, ListaAccesos):-
+    exist([IDdocumento, _, Usuario, _, _, _], ListaDocumentos),
+    !;
+    exist([Usuario, "W"], ListaAccesos),
+    !.
+
+% Dominio: Se emplea una lista de accesos de usuarios y una variable (contenedor del string de Accesos)
+% Predicado: accesoToString(ListaAccesos, AccesosString).
+% Meta primaria: accesoToString
+% Descripción: La regla permite transformar un acceso a string
+
+accesoToString([], "").
+accesoToString([Usuario, Acceso], AccesoString):-
+    atomics_to_string(["Usuario Compartido: ", Usuario, " - ", "Acceso: ", Acceso, '\n'], AccesoString).
+
+% Ejemplo:
+% accesoToString(["crios", "W"], AccesoString).
+
+% Dominio: Se emplea una lista de listas de accesos de usuarios y dos variables (Acumulador y contenedor del string de Accesos)
+% Predicado: accesosToString(ListaDeListasAccesos, Acum, AccesosString).
+%            accesoToString(ListaAccesos, AccesosString).
+% Meta primaria: accesosToString
+% Meta secundaria: accesoToString
+% Descripción: La regla permite transformar todos los accesos en la lista de accesos a string
+
+accesosToString([], Acum, Acum).
+accesosToString([Cabeza|Resto], Acum, AccesosString):-
+    accesoToString(Cabeza, AccesoString),
+    string_concat(AccesoString, Acum, Aux),
+    accesosToString(Resto, Aux, AccesosString).
+
+% Ejemplo:
+% accesosToString([["crios", "W"], ["crios", "R"]], "", AccesosString).
+
+% Dominio: Se emplea un tipo de dato usuario, un entero y dos lista de listas, una del tipo de dato documento y otra de accesos
+% Predicado: usuarioOcompartido(Usuario, IDdocumento, ListaDocumentos, ListaAccesos).
+%            exist(Elemento, ListaDeElementos).
+% Meta primaria: usuarioOcompartido
+% Meta secundaria: exist
+% Descripción: La regla permite verificar si a un usuario le ha sido compartido el acceso a determinado documento
+
+usuarioOcompartido(Usuario, IDdocumento, ListaDocumentos, ListaAccesos):-
+    exist([IDdocumento, _, Usuario, _, _, _], ListaDocumentos),
+    !;
+    exist([Usuario, _], ListaAccesos),
+    !.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% EJEMPLOS REQUERIMIENTOS FUNCIONALES
+% EJEMPLOS paradigmaDocsRegister
+
+% Ejemplo 1:
+/* 
+date(25, 12, 2021, D1),
+date(24, 12, 2021, D2),
+date(23, 12, 2021, D3),
+paradigmaDocs("Google docs", D1, [], [], PD1),
+paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2),
+paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
+paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4),
+paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
+paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6).
+*/
+% Ejemplo 2 (registrar un usuario con nombre de usuario ya registrado -> caso no válido):
+/*
+date(25, 12, 2021, D1),
+date(24, 12, 2021, D2),
+date(23, 12, 2021, D3),
+paradigmaDocs("Google docs", D1, [], [], PD1),
+paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2),
+paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
+paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4),
+paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
+paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6),
+paradigmaDocsRegister(PD6, D2, "Jaime Loyola", "Ya existe el este nombre de usuario", PD7).
+*/
+% Ejemplo 3 (La salida de paradigmaDocs corresponde a la salida correcta, es decir, existe y es validada en el proceso):
+/*
+paradigmaDocsRegister(["Google docs", [25, 12, 2021], [[[23, 12, 2021], "Aranzazu Huerta", "SUS", 0],
+[[23, 12, 2021], "Catalina Vergara", "cale", 0], [[24, 12, 2021], "Benjamin Navarro", "naarro", 0],
+[[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]], []],
+[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio",
+["Google docs", [25, 12, 2021], [[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0],
+[[23, 12, 2021], "Aranzazu Huerta", "SUS", 0], [[23, 12, 2021], "Catalina Vergara", "cale", 0],
+[[24, 12, 2021], "Benjamin Navarro", "naarro", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]], []]).
+*/
+
+% EJEMPLOS paradigmaDocsLogin
+
+% Ejemplo 1:
+/*
+date(25, 12, 2021, D1),
+date(24, 12, 2021, D2),
+date(23, 12, 2021, D3),
+paradigmaDocs("Google docs", D1, [], [], PD1),
+paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2),
+paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
+paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4),
+paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
+paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6),
+paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7).
+*/
+% Ejemplo 2 (contraseña incorrecta -> caso no válido):
+/*
+date(25, 12, 2021, D1),
+date(24, 12, 2021, D2),
+date(23, 12, 2021, D3),
+paradigmaDocs("Google docs", D1, [], [], PD1),
+paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2),
+paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
+paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4),
+paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
+paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6),
+paradigmaDocsLogin(PD6, "Benjamin Navarro", "contrasenia incorrecta", PD7).
+*/
+% Ejemplo 3 (La salida de paradigmaDocs corresponde a la salida correcta, es decir, existe y es validada en el proceso):
+/*
+paradigmaDocsLogin(["Google docs", [25, 12, 2021], [[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0],
+[[23, 12, 2021], "Aranzazu Huerta", "SUS", 0], [[23, 12, 2021], "Catalina Vergara", "cale", 0],
+[[24, 12, 2021], "Benjamin Navarro", "naarro", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]], []],
+"Benjamin Navarro", "naarro",
+["Google docs", [25, 12, 2021], [[[24, 12, 2021], "Benjamin Navarro", "naarro", 1],
+[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0], [[23, 12, 2021], "Aranzazu Huerta", "SUS", 0],
+[[23, 12, 2021], "Catalina Vergara", "cale", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]], []]).
+*/
+
+% EJEMPLOS paradigmaDocsCreate
+
+% Ejemplo 1:
+/*
+date(25, 12, 2021, D1), 
+date(24, 12, 2021, D2),
+date(23, 12, 2021, D3), 
+paradigmaDocs("Google docs", D1, [], [], PD1),
+paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), 
+paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
+paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), 
+paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
+paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6), 
+paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
+paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
+paradigmaDocsLogin(PD8, "Catalina Vergara", "cale", PD9),
+paradigmaDocsCreate(PD9, D2, "Documento 1", "Primer contenido del Documento con ID 1", PD10),
+paradigmaDocsLogin(PD10, "Jaime Loyola", "pinturaseca123", PD11),
+paradigmaDocsCreate(PD11, D3, "Documento 2", "Primer contenido del Documento con ID 2", PD12).
+*/
+% Ejemplo 2 (no hay sesión activa -> caso no válido):
+/*
+date(25, 12, 2021, D1), 
+date(24, 12, 2021, D2), 
+date(23, 12, 2021, D3), 
+paradigmaDocs("Google docs", D1, [], [], PD1),
+paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), 
+paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
+paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), 
+paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
+paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6),
+paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8).
+*/
+% Ejemplo 3 (La salida de paradigmaDocs corresponde a la salida correcta, es decir, existe y es validada en el proceso):
+/*
+paradigmaDocsCreate(["Google docs", [25, 12, 2021], [[[24, 12, 2021], "Benjamin Navarro", "naarro", 1],
+[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0], [[23, 12, 2021], "Aranzazu Huerta", "SUS", 0],
+[[23, 12, 2021], "Catalina Vergara", "cale", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]], []],
+[23, 12, 2021], "Documento 0", "Primer contenido del Documento con ID 0",
+["Google docs", [25, 12, 2021], [[[24, 12, 2021], "Benjamin Navarro", "naarro", 0],
+[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0], [[23, 12, 2021], "Aranzazu Huerta", "SUS", 0],
+[[23, 12, 2021], "Catalina Vergara", "cale", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]],
+[[0, "Documento 0", "Benjamin Navarro", [23, 12, 2021], [[0, [23, 12, 2021], "Primer contenido del Documento con ID 0"]], []]]]).
+*/
+
+% EJEMPLOS paradigmaDocsShare
+
+% Ejemplo 1:
+/*
+date(25, 12, 2021, D1), 
+date(24, 12, 2021, D2), 
+date(23, 12, 2021, D3), 
+paradigmaDocs("Google docs", D1, [], [], PD1),
+paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), 
+paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
+paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), 
+paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
+paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6), 
+paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
+paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
+paradigmaDocsLogin(PD8, "Catalina Vergara", "cale", PD9),
+paradigmaDocsCreate(PD9, D2, "Documento 1", "Primer contenido del Documento con ID 1", PD10),
+paradigmaDocsLogin(PD10, "Jaime Loyola", "pinturaseca123", PD11),
+paradigmaDocsCreate(PD11, D3, "Documento 2", "Primer contenido del Documento con ID 2", PD12),
+paradigmaDocsLogin(PD12, "Benjamin Navarro", "naarro", PD13),
+paradigmaDocsShare(PD13, 0, ["R", "W", "C"], ["Aranzazu Huerta", "Gonzalo Marambio"], PD14),
+paradigmaDocsLogin(PD14, "Catalina Vergara", "cale", PD15),
+paradigmaDocsShare(PD15, 1, ["W", "C"], ["Jaime Loyola", "Benjamin Navarro"], PD16).
+*/
+% Ejemplo 2 (no hay sesión activa -> caso no válido):
+/*
+date(25, 12, 2021, D1), 
+date(24, 12, 2021, D2), 
+date(23, 12, 2021, D3), 
+paradigmaDocs("Google docs", D1, [], [], PD1),
+paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), 
+paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
+paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), 
+paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
+paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6), 
+paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
+paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
+paradigmaDocsLogin(PD8, "Catalina Vergara", "cale", PD9),
+paradigmaDocsCreate(PD9, D2, "Documento 1", "Primer contenido del Documento con ID 1", PD10),
+paradigmaDocsLogin(PD10, "Jaime Loyola", "pinturaseca123", PD11),
+paradigmaDocsCreate(PD11, D3, "Documento 2", "Primer contenido del Documento con ID 2", PD12),
+paradigmaDocsShare(PD12, 0, ["R", "W", "C"], ["Aranzazu Huerta", "Gonzalo Marambio"], PD13).
+*/
+% Ejemplo 3 (La salida de paradigmaDocs corresponde a la salida correcta, es decir, existe y es validada en el proceso):
+/*
+paradigmaDocsShare( ["Google docs", [25, 12, 2021], [[[23, 12, 2021], "Catalina Vergara", "cale", 0],
+[[24, 12, 2021], "Benjamin Navarro", "naarro", 1], [[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0],
+[[23, 12, 2021], "Aranzazu Huerta", "SUS", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]],
+[[0, "Documento 0", "Benjamin Navarro", [23, 12, 2021], [[0, [23, 12, 2021], "Primer contenido del Documento con ID 0"]], []]]],
+0, ["R", "W", "C"], ["Aranzazu Huerta", "Gonzalo Marambio"], 
+["Google docs", [25, 12, 2021], [[[24, 12, 2021], "Benjamin Navarro", "naarro", 0],
+[[23, 12, 2021], "Catalina Vergara", "cale", 0], [[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0],
+[[23, 12, 2021], "Aranzazu Huerta", "SUS", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]],
+[[0, "Documento 0", "Benjamin Navarro", [23, 12, 2021], [[0, [23, 12, 2021], "Primer contenido del Documento con ID 0"]],
+[["Aranzazu Huerta", "R"], ["Aranzazu Huerta", "W"], ["Aranzazu Huerta", "C"], ["Gonzalo Marambio", "R"],
+["Gonzalo Marambio", "W"], ["Gonzalo Marambio", "C"]]]]]).
+*/
+
+% EJEMPLOS paradigmaDocsAdd
+
+% Ejemplo 1:
+/*
+date(25, 12, 2021, D1), 
+date(24, 12, 2021, D2), 
+date(23, 12, 2021, D3), 
+paradigmaDocs("Google docs", D1, [], [], PD1),
+paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), 
+paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
+paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), 
+paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
+paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6), 
+paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
+paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
+paradigmaDocsLogin(PD8, "Catalina Vergara", "cale", PD9),
+paradigmaDocsCreate(PD9, D2, "Documento 1", "Primer contenido del Documento con ID 1", PD10),
+paradigmaDocsLogin(PD10, "Jaime Loyola", "pinturaseca123", PD11),
+paradigmaDocsCreate(PD11, D3, "Documento 2", "Primer contenido del Documento con ID 2", PD12),
+paradigmaDocsLogin(PD12, "Benjamin Navarro", "naarro", PD13),
+paradigmaDocsShare(PD13, 0, ["R", "W", "C"], ["Aranzazu Huerta", "Gonzalo Marambio"], PD14),
+paradigmaDocsLogin(PD14, "Catalina Vergara", "cale", PD15),
+paradigmaDocsShare(PD15, 1, ["W", "C"], ["Jaime Loyola", "Benjamin Navarro"], PD16),
+paradigmaDocsLogin(PD16, "Benjamin Navarro", "naarro", PD17),
+paradigmaDocsAdd(PD17, 0, [25, 12, 2021], ". Segundo contenido del Documento con ID 0.", PD18),
+paradigmaDocsLogin(PD18, "Catalina Vergara", "cale", PD19),
+paradigmaDocsAdd(PD19, 1, [25, 12, 2021], ". Segundo contenido del Documento con ID 1.", PD20),
+paradigmaDocsLogin(PD20, "Benjamin Navarro", "naarro", PD21),
+paradigmaDocsAdd(PD21, 0, [25, 12, 2021], " Tercer contenido del Documento con ID 0.", PD22).
+*/
+% Ejemplo 2 (usuario no autorizado (ni autor ni compartido) quiere realizar un cambio sobre un documento -> caso no válido):
+/*
+date(25, 12, 2021, D1), 
+date(24, 12, 2021, D2), 
+date(23, 12, 2021, D3),
+paradigmaDocs("Google docs", D1, [], [], PD1),
+paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2),
+paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
+paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4),
+paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
+paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6),
+paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
+paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
+paradigmaDocsLogin(PD8, "Catalina Vergara", "cale", PD9),
+paradigmaDocsCreate(PD9, D2, "Documento 1", "Primer contenido del Documento con ID 1", PD10),
+paradigmaDocsLogin(PD10, "Jaime Loyola", "pinturaseca123", PD11),
+paradigmaDocsCreate(PD11, D3, "Documento 2", "Primer contenido del Documento con ID 2", PD12),
+paradigmaDocsLogin(PD12, "Benjamin Navarro", "naarro", PD13),
+paradigmaDocsShare(PD13, 0, ["R", "W", "C"], ["Aranzazu Huerta", "Gonzalo Marambio"], PD14),
+paradigmaDocsLogin(PD14, "Catalina Vergara", "cale", PD15),
+paradigmaDocsShare(PD15, 1, ["W", "C"], ["Jaime Loyola", "Benjamin Navarro"], PD16),
+paradigmaDocsLogin(PD16, "Jaime Loyola", "pinturaseca123", PD17),
+paradigmaDocsAdd(PD17, 0, [25, 12, 2021], ". Segundo contenido del Documento con ID 0.", PD18).
+*/
+% Ejemplo 3 (La salida de paradigmaDocs corresponde a la salida correcta, es decir, existe y es validada en el proceso):
+/*
+paradigmaDocsAdd(["Google docs", [25, 12, 2021], [[[23, 12, 2021], "Catalina Vergara", "cale", 0],
+[[24, 12, 2021], "Benjamin Navarro", "naarro", 1], [[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0],
+[[23, 12, 2021], "Aranzazu Huerta", "SUS", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]],
+[[0, "Documento 0", "Benjamin Navarro", [23, 12, 2021], [[0, [23, 12, 2021], "Primer contenido del Documento con ID 0"]], []]]],
+0, [23, 12, 2021], ". Segundo contenido del Documento con ID 0.",
+["Google docs", [25, 12, 2021], [[[24, 12, 2021], "Benjamin Navarro", "naarro", 0], [[23, 12, 2021], "Catalina Vergara", "cale", 0],
+[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0], [[23, 12, 2021], "Aranzazu Huerta", "SUS", 0],
+[[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0]],
+[[0, "Documento 0", "Benjamin Navarro", [23, 12, 2021], [[0, [23, 12, 2021], "Primer contenido del Documento con ID 0"],
+[1, [23, 12, 2021], "Primer contenido del Documento con ID 0. Segundo contenido del Documento con ID 0."]], []]]]).
+*/
+
+% EJEMPLOS paradigmaDocsRestoreVersion
+
+% Ejemplo 1:
+/*
+date(25, 12, 2021, D1), 
+date(24, 12, 2021, D2), 
+date(23, 12, 2021, D3), 
+paradigmaDocs("Google docs", D1, [], [], PD1),
+paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), 
+paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
+paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), 
+paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
+paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6), 
+paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
+paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
+paradigmaDocsLogin(PD8, "Catalina Vergara", "cale", PD9),
+paradigmaDocsCreate(PD9, D2, "Documento 1", "Primer contenido del Documento con ID 1", PD10),
+paradigmaDocsLogin(PD10, "Jaime Loyola", "pinturaseca123", PD11),
+paradigmaDocsCreate(PD11, D3, "Documento 2", "Primer contenido del Documento con ID 2", PD12),
+paradigmaDocsLogin(PD12, "Benjamin Navarro", "naarro", PD13),
+paradigmaDocsShare(PD13, 0, ["R", "W", "C"], ["Aranzazu Huerta", "Gonzalo Marambio"], PD14),
+paradigmaDocsLogin(PD14, "Catalina Vergara", "cale", PD15),
+paradigmaDocsShare(PD15, 1, ["W", "C"], ["Jaime Loyola", "Benjamin Navarro"], PD16),
+paradigmaDocsLogin(PD16, "Benjamin Navarro", "naarro", PD17),
+paradigmaDocsAdd(PD17, 0, [25, 12, 2021], ". Segundo contenido del Documento con ID 0.", PD18),
+paradigmaDocsLogin(PD18, "Catalina Vergara", "cale", PD19),
+paradigmaDocsAdd(PD19, 1, [25, 12, 2021], ". Segundo contenido del Documento con ID 1.", PD20),
+paradigmaDocsLogin(PD20, "Benjamin Navarro", "naarro", PD21),
+paradigmaDocsAdd(PD21, 0, [25, 12, 2021], " Tercer contenido del Documento con ID 0.", PD22),
+paradigmaDocsLogin(PD22, "Benjamin Navarro", "naarro", PD23),
+paradigmaDocsRestoreVersion(PD23, 0, 0, PD24).
+*/
+% Ejemplo 2 (usuario, más no autor, quiere restaurar una versión de un documento -> caso no válido):
+/*
+date(25, 12, 2021, D1), 
+date(24, 12, 2021, D2),
+date(23, 12, 2021, D3), 
+paradigmaDocs("Google docs", D1, [], [], PD1), 
+paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2),
+paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3), 
+paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4),
+paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5), 
+paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6),
+paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
+paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
+paradigmaDocsLogin(PD8, "Catalina Vergara", "cale", PD9),
+paradigmaDocsCreate(PD9, D2, "Documento 1", "Primer contenido del Documento con ID 1", PD10),
+paradigmaDocsLogin(PD10, "Jaime Loyola", "pinturaseca123", PD11),
+paradigmaDocsCreate(PD11, D3, "Documento 2", "Primer contenido del Documento con ID 2", PD12),
+paradigmaDocsLogin(PD12, "Benjamin Navarro", "naarro", PD13),
+paradigmaDocsShare(PD13, 0, ["R", "W", "C"], ["Aranzazu Huerta", "Gonzalo Marambio"], PD14),
+paradigmaDocsLogin(PD14, "Catalina Vergara", "cale", PD15),
+paradigmaDocsShare(PD15, 1, ["W", "C"], ["Jaime Loyola", "Benjamin Navarro"], PD16),
+paradigmaDocsLogin(PD16, "Benjamin Navarro", "naarro", PD17),
+paradigmaDocsAdd(PD17, 0, [25, 12, 2021], ". Segundo contenido del Documento con ID 0.", PD18),
+paradigmaDocsLogin(PD18, "Catalina Vergara", "cale", PD19),
+paradigmaDocsAdd(PD19, 1, [25, 12, 2021], ". Segundo contenido del Documento con ID 1.", PD20),
+paradigmaDocsLogin(PD20, "Benjamin Navarro", "naarro", PD21),
+paradigmaDocsAdd(PD21, 0, [25, 12, 2021], " Tercer contenido del Documento con ID 0.", PD22),
+paradigmaDocsLogin(PD22, "Catalina Vergara", "cale", PD23), 
+paradigmaDocsRestoreVersion(PD23, 0, 0, PD24).
+*/
+% Ejemplo 3:
+/*
+paradigmaDocsRestoreVersion(["Google docs", [25, 12, 2021], [[[24, 12, 2021], "Benjamin Navarro", "naarro", 1],
+[[23, 12, 2021], "Catalina Vergara", "cale", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0],
+[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0], [[23, 12, 2021], "Aranzazu Huerta", "SUS", 0]],
+[[0, "Documento 0", "Benjamin Navarro", [23, 12, 2021], [[0, [23, 12, 2021], "Primer contenido del Documento con ID 0"],
+[1, [25, 12, 2021], "Primer contenido del Documento con ID 0. Segundo contenido del Documento con ID 0."],
+[2, [25, 12, 2021], "Primer contenido del Documento con ID 0. Segundo contenido del Documento con ID 0. Tercer contenido del Documento con ID 0."]],
+[["Aranzazu Huerta", "R"], ["Aranzazu Huerta", "W"], ["Aranzazu Huerta", "C"], ["Gonzalo Marambio", "R"], ["Gonzalo Marambio", "W"],
+["Gonzalo Marambio", "C"]]], [1, "Documento 1", "Catalina Vergara", [24, 12, 2021], [[0, [24, 12, 2021],
+"Primer contenido del Documento con ID 1"], [1, [25, 12, 2021],
+"Primer contenido del Documento con ID 1. Segundo contenido del Documento con ID 1."]], [["Jaime Loyola", "W"],
+["Jaime Loyola", "C"], ["Benjamin Navarro", "W"], ["Benjamin Navarro", "C"]]], [2, "Documento 2", "Jaime Loyola", [23, 12, 2021],
+[[0, [23, 12, 2021], "Primer contenido del Documento con ID 2"]], []]]],
+0, 0, 
+["Google docs", [25, 12, 2021], [[[24, 12, 2021],
+"Benjamin Navarro", "naarro", 0], [[23, 12, 2021], "Catalina Vergara", "cale", 0], [[24, 12, 2021], "Jaime Loyola", "pinturaseca123", 0],
+[[23, 12, 2021], "Gonzalo Marambio", "GonzalesMarimbio", 0], [[23, 12, 2021], "Aranzazu Huerta", "SUS", 0]],
+[[0, "Documento 0", "Benjamin Navarro", [23, 12, 2021], [[0, [25, 12, 2021],
+"Primer contenido del Documento con ID 0. Segundo contenido del Documento con ID 0."], [1, [25, 12, 2021],
+"Primer contenido del Documento con ID 0. Segundo contenido del Documento con ID 0. Tercer contenido del Documento con ID 0."],
+[2, [23, 12, 2021], "Primer contenido del Documento con ID 0"]], [["Aranzazu Huerta", "R"], ["Aranzazu Huerta", "W"],
+["Aranzazu Huerta", "C"], ["Gonzalo Marambio", "R"], ["Gonzalo Marambio", "W"], ["Gonzalo Marambio", "C"]]],
+[1, "Documento 1", "Catalina Vergara", [24, 12, 2021], [[0, [24, 12, 2021], "Primer contenido del Documento con ID 1"],
+[1, [25, 12, 2021], "Primer contenido del Documento con ID 1. Segundo contenido del Documento con ID 1."]], [["Jaime Loyola", "W"],
+["Jaime Loyola", "C"], ["Benjamin Navarro", "W"], ["Benjamin Navarro", "C"]]], [2, "Documento 2", "Jaime Loyola", [23, 12, 2021],
+[[0, [23, 12, 2021], "Primer contenido del Documento con ID 2"]], []]]]).
+*/
+
+% EJEMPLOS paradigmaDocsToString
+
 % Ejemplo 1 (Usuario No autenticado):
 /*
-date(25, 12, 2021, D1), date(24, 12, 2021, D2), date(23, 12, 2021, D3), paradigmaDocs("Google docs", D1, [], [], PD1),
-paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
-paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
+date(25, 12, 2021, D1), 
+date(24, 12, 2021, D2), 
+date(23, 12, 2021, D3), 
+paradigmaDocs("Google docs", D1, [], [], PD1),
+paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), 
+paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
+paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4),
+paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
 paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6), 
 paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
 paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
@@ -902,9 +1212,14 @@ paradigmaDocsToString(PD24, PD25).
 */
 % Ejemplo 2 (Usuario Autenticado):
 /*
-date(25, 12, 2021, D1), date(24, 12, 2021, D2), date(23, 12, 2021, D3), paradigmaDocs("Google docs", D1, [], [], PD1),
-paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
-paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
+date(25, 12, 2021, D1), 
+date(24, 12, 2021, D2), 
+date(23, 12, 2021, D3), 
+paradigmaDocs("Google docs", D1, [], [], PD1),
+paradigmaDocsRegister(PD1, D2, "Jaime Loyola", "pinturaseca123", PD2), 
+paradigmaDocsRegister(PD2, D2, "Benjamin Navarro", "naarro", PD3),
+paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), 
+paradigmaDocsRegister(PD4, D3, "Aranzazu Huerta", "SUS", PD5),
 paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6), 
 paradigmaDocsLogin(PD6, "Benjamin Navarro", "naarro", PD7),
 paradigmaDocsCreate(PD7, D3, "Documento 0", "Primer contenido del Documento con ID 0", PD8),
@@ -923,115 +1238,3 @@ paradigmaDocsRegister(PD3, D3, "Catalina Vergara", "cale", PD4), paradigmaDocsRe
 paradigmaDocsRegister(PD5, D3, "Gonzalo Marambio", "GonzalesMarimbio", PD6), 
 paradigmaDocsToString(PD6, PD7).
 */
-
-
-    
-
-
-% Otros Predicados
-
-exist(Elemento, [Elemento|_]):-
-    !.
-exist(Elemento, [_|Resto]):-
-    exist(Elemento, Resto).
-
-insertarAlPrincipio(Elemento, [], [Elemento]):-
-    !.
-insertarAlPrincipio(Elemento, Lista, [Elemento|Lista]).
-
-extraer(Elemento, [Elemento|_], Elemento):-
-    !.
-extraer(Elemento, [_|Resto], Elemento):-
-    extraer(Elemento, Resto, Elemento).
-
-borrarElemento(Elemento, [Elemento|Resto], Resto):-
-    !.
-borrarElemento(Elemento, [Cabeza|Resto], [Cabeza|Retorno]):-
-    borrarElemento(Elemento, Resto, Retorno).
-
-insertarAlFinal(Elemento, [], [Elemento]):-
-    !.
-insertarAlFinal(Elemento, [Cabeza|Resto], [Cabeza|Lista]):-
-    insertarAlFinal(Elemento, Resto, Lista).
-
-largoLista([], 0).
-largoLista([_|Resto], Largo):-
-    largoLista(Resto, LargoAcum),
-    Largo is LargoAcum + 1.
-
-% Si es una lista de un elemento...
-% Ej: productoLista([["u1"]], Combinaciones).
-productoLista([[Cabeza]], [[Cabeza]]):-
-    !.
-% Si es una lista de mas de un elemento...
-% Ej: productoLista([["u1", "u5"]], Combinaciones).
-productoLista([[Cabeza|Resto1]], [[Cabeza]|Resto2]) :- 
-    productoLista([Resto1], Resto2),
-    !.
-
-% Si son mas de una lista de elementos...
-% Ej: productoLista([["u1", "u5"], ["R", "W", "C"]], Combinaciones).
-productoLista([Cabeza|Resto1], Resto2) :-
-    productoLista(Resto1, R1),
-    producto(Cabeza, R1, Resto2),
-    !.
-
-% Caso base, no hay nada listas que "multiplicar"
-producto([], _, []):-
-    !.
-% Caso recursivo, hay elementos de listas que "multiplicar" con elementos de listas de listas
-% Ej: producto(["u1", "u5"], [["R"], ["W"], ["C"]], Producto).
-producto([Cabeza|Resto], ListadeListas, Acum) :-
-    producto(Resto, ListadeListas, Lista),
-    combinador(Cabeza, ListadeListas, Lista, Acum),
-    !.
-% Caso base, el primer elemento no puede "combinarse" con los elementos contenidos en la primera lista ya que no hay ninguno
-% Ej: combinador("u5", [], [], Com).
-combinador(_, [], Lista, Lista):-
-    !.
-% Caso recursivo, el primer elemento puede ser "combinado" aun con los elementos de la lista de listas
-% combinador("u5", [["R"], ["W"], ["C"]], [], Com).
-combinador(Elemento, [Cabeza1|Resto1], Lista, [[Elemento|Cabeza1]|Resto2]) :-
-    combinador(Elemento, Resto1, Lista, Resto2),
-    !.
-    
-concatenar([], Lista, Lista).
-concatenar([Cabeza|Resto], Lista, [Cabeza|ListaFinal]):-
-    concatenar(Resto, Lista, ListaFinal).
-
-correlativo([], Acum, Acum).
-correlativo([Cabeza|Resto], Acum, VersionCorrelativa):-
-    largoLista(Resto, IDversion),
-    modificarIDversion(Cabeza, IDversion, Act),
-    insertarAlPrincipio(Act, Acum, V),
-    correlativo(Resto, V, VersionCorrelativa).
-% Ej: correlativo([[100, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"], [200, [19, 12, 2021], "Este es el segundo texto y/o contenido"], [300, [19, 12, 2021], "Este es el tercer texto y/o contenido"]], Acumulador, VersionesCorrelativas).
-
-
-usuarioOcompartidoEditar(Usuario, IDdocumento, ListaDocumentos, ListaAccesos):-
-    exist([IDdocumento, _, Usuario, _, _, _], ListaDocumentos),
-    !;
-    exist([Usuario, "W"], ListaAccesos),
-    !.
-
-accesoToString([], "").
-accesoToString([Usuario, Acceso], AccesoString):-
-    atomics_to_string(["Usuario Compartido: ", Usuario, " - ", "Acceso: ", Acceso, '\n'], AccesoString).
-
-% Ejemplo:
-% accesoToString(["crios", "W"], AccesoString).
-
-accesosToString([], Acum, Acum).
-accesosToString([Cabeza|Resto], Acum, AccesosString):-
-    accesoToString(Cabeza, AccesoString),
-    string_concat(AccesoString, Acum, Aux),
-    accesosToString(Resto, Aux, AccesosString).
-
-% Ejemplo:
-% accesosToString([["crios", "W"], ["crios", "R"]], "", AccesosString).
-
-usuarioOcompartido(Usuario, IDdocumento, ListaDocumentos, ListaAccesos):-
-    exist([IDdocumento, _, Usuario, _, _, _], ListaDocumentos),
-    !;
-    exist([Usuario, _], ListaAccesos),
-    !.
