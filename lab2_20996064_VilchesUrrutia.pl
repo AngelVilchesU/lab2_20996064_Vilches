@@ -267,6 +267,225 @@ versionesToString([Cabeza|Resto], Acum, VersionesString):-
     versionesToString(Resto, Aux, VersionesString).
 
 
+% Otros Predicados
+
+% Dominio: Se emplea un elemento de cualquier tipo y una lista
+% Predicado: exist(Elemento, ListaDeElementos).
+% Meta primaria: exist
+% Descripción: La regla permite verificar la existencia (o no) de un elemento en una lista
+
+exist(Elemento, [Elemento|_]):-
+    !.
+exist(Elemento, [_|Resto]):-
+    exist(Elemento, Resto).
+
+% Dominio: Se emplea un elemento de cualquier tipo, una lista y una variable (contenedor Resultado)
+% Predicado: insertarAlPrincipio(Elemento, Lista, ListaRetorno).
+% Meta primaria: insertarAlPrincipio
+% Descripción: La regla permite insertar un elemento a la cabeza de una lista
+
+insertarAlPrincipio(Elemento, [], [Elemento]):-
+    !.
+insertarAlPrincipio(Elemento, Lista, [Elemento|Lista]).
+
+% Dominio: Se emplea un elemento de cualquier tipo, una lista y una variable (contenedor Elemento)
+% Predicado: extraer(Elemento, ListaDeElementos, ElementoRetorno).
+% Meta primaria: extraer
+% Descripción: La regla permite desglosar y/o obtener un elemento especifico de una lista de elementos
+
+extraer(Elemento, [Elemento|_], Elemento):-
+    !.
+extraer(Elemento, [_|Resto], Elemento):-
+    extraer(Elemento, Resto, Elemento).
+
+% Dominio: Se emplea un elemento de cualquier tipo, una lista y una variable (contenedor Resto)
+% Predicado: borrarElemento(Elemento, ListaDeElementos, ListaResto).
+% Meta primaria: borrarElemento
+% Descripción: La regla permite remover un elemento especifico de una lista de elementos
+
+borrarElemento(Elemento, [Elemento|Resto], Resto):-
+    !.
+borrarElemento(Elemento, [Cabeza|Resto], [Cabeza|Retorno]):-
+    borrarElemento(Elemento, Resto, Retorno).
+
+% Dominio: Se emplea un elemento de cualquier tipo, una lista y una variable (contenedor Lista)
+% Predicado: insertarAlFinal(Elemento, ListaDeElementos, ListaNueva).
+% Meta primaria: insertarAlFinal
+% Descripción: La regla permite insertar un elemento al final de una lista de elementos
+
+insertarAlFinal(Elemento, [], [Elemento]):-
+    !.
+insertarAlFinal(Elemento, [Cabeza|Resto], [Cabeza|Lista]):-
+    insertarAlFinal(Elemento, Resto, Lista).
+
+% Dominio: Se emplea una lista y una variable (contenedor Largo)
+% Predicado: largoLista(ListaDeElementos, Largo).
+% Meta primaria: largoLista
+% Descripción: La regla permite obtener el largo de una lista
+
+largoLista([], 0).
+largoLista([_|Resto], Largo):-
+    largoLista(Resto, LargoAcum),
+    Largo is LargoAcum + 1.
+
+% Dominio: Se emplea una lista de listas y una variable (contenedor Combinaciones)
+% Predicado: productoLista(ListaDeListas, Combinaciones).
+%            producto(Lista, ListaDeListas, Acum).
+% Meta primaria: productoLista
+% Meta secundaria: producto
+% Descripción: La regla permite obtener las distintas combinaciones pares de acuerdo a listas de listas...
+%              ... (orientado al requerimiento funcional paradigmaDocsShare)
+
+% Si es una lista de un elemento...
+% Ej: productoLista([["u1"]], Combinaciones).
+productoLista([[Cabeza]], [[Cabeza]]):-
+    !.
+% Si es una lista de mas de un elemento...
+% Ej: productoLista([["u1", "u5"]], Combinaciones).
+productoLista([[Cabeza|Resto1]], [[Cabeza]|Resto2]) :- 
+    productoLista([Resto1], Resto2),
+    !.
+
+% Si son mas de una lista de elementos...
+% Ej: productoLista([["u1", "u5"], ["R", "W", "C"]], Combinaciones).
+productoLista([Cabeza|Resto1], Resto2) :-
+    productoLista(Resto1, R1),
+    producto(Cabeza, R1, Resto2),
+    !.
+
+% Dominio: Se emplea una lista, lista de listas y una variable (contenedor Acum)
+% Predicado: producto(Lista, ListaDeListas, Acum).
+%            combinador(Elemento, ListaDeListas, Lista, Combinacion).
+% Meta primaria: producto
+% Meta secundaria: combinador
+% Descripción: La regla permite obtener los productos de un elemento de la primera lista con los multiples ...
+%              ... existentes (o no) en las listas de listas
+
+% Caso base, no hay nada listas que "multiplicar"
+producto([], _, []):-
+    !.
+% Caso recursivo, hay elementos de listas que "multiplicar" con elementos de listas de listas
+% Ej: producto(["u1", "u5"], [["R"], ["W"], ["C"]], Producto).
+producto([Cabeza|Resto], ListadeListas, Acum) :-
+    producto(Resto, ListadeListas, Lista),
+    combinador(Cabeza, ListadeListas, Lista, Acum),
+    !.
+
+% Dominio: Se emplea un elemento (string), lista de listas, lista inicialmente vacia y una variable (contenedor Combinacion)
+% Predicado: combinador(Elemento, ListaDeListas, Lista, Combinacion).
+% Meta primaria: combinador
+% Descripción: La regla permite la "unión" del elemento ingresado con los elementos dentro de la lista de listas
+
+% Caso base, el primer elemento no puede "combinarse" con los elementos contenidos en la primera lista ya que no hay ninguno
+% Ej: combinador("u5", [], [], Com).
+combinador(_, [], Lista, Lista):-
+    !.
+% Caso recursivo, el primer elemento puede ser "combinado" aun con los elementos de la lista de listas
+% combinador("u5", [["R"], ["W"], ["C"]], [], Com).
+combinador(Elemento, [Cabeza1|Resto1], Lista, [[Elemento|Cabeza1]|Resto2]) :-
+    combinador(Elemento, Resto1, Lista, Resto2),
+    !.
+
+% Dominio: Se emplean dos listas y una variable (contenedor Concatenado)
+% Predicado: concatenar(Lista1, Lista2, ListasConcatenadas).
+% Meta primaria: concatenar
+% Descripción: La regla permite la concatenación de dos listas
+
+concatenar([], Lista, Lista).
+concatenar([Cabeza|Resto], Lista, [Cabeza|ListaFinal]):-
+    concatenar(Resto, Lista, ListaFinal).
+
+% Dominio: Se emplea un tipo de dato versión (lista) y dos variables (Acumulador y contenedor Correlativo)
+% Predicado: correlativo(ListaVersion, Lista, ListaVersionCorrelativa).
+%            largoLista(ListaDeElementos, Largo).
+%            modificarIDversion(ListaVersionAntigua, IDnuevo, ListaVersionNueva).
+%            insertarAlPrincipio(Elemento, Lista, ListaRetorno).
+% Meta primaria: correlativo
+% Metas secundarias: largoLista
+%                    modificarIDversion
+%                    insertarAlPrincipio
+% Descripción: La regla permite "ordenar" los identificadores de los tipo de datos version (lista) contenidos...
+%              ... en una lista de listas de forma correlativa (de 0 a N)
+
+correlativo([], Acum, Acum).
+correlativo([Cabeza|Resto], Acum, VersionCorrelativa):-
+    largoLista(Resto, IDversion),
+    modificarIDversion(Cabeza, IDversion, Act),
+    insertarAlPrincipio(Act, Acum, V),
+    correlativo(Resto, V, VersionCorrelativa).
+% Ej: correlativo([[100, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"], [200, [19, 12, 2021], "Este es el segundo texto y/o contenido"], [300, [19, 12, 2021], "Este es el tercer texto y/o contenido"]], Acumulador, VersionesCorrelativas).
+
+% Dominio: Se emplea un tipo de dato usuario, un entero y dos lista de listas, una del tipo de dato documento y otra de accesos
+% Predicado: usuarioOcompartidoEditar(Usuario, IDdocumento, ListaDocumentos, ListaAccesos).
+%            exist(Elemento, ListaDeElementos).
+% Meta primaria: usuarioOcompartidoEditar
+% Meta secundaria: exist
+% Descripción: La regla permite verificar si un usuario puede editar determinado documento de acuerdo a si este figura...
+%              ... como autor o le haya sido compartido con permiso de escritura
+
+usuarioOcompartidoEditar(Usuario, IDdocumento, ListaDocumentos, ListaAccesos):-
+    exist([IDdocumento, _, Usuario, _, _, _], ListaDocumentos),
+    !;
+    exist([Usuario, "W"], ListaAccesos),
+    !.
+
+% Dominio: Se emplea una lista de accesos de usuarios y una variable (contenedor del string de Accesos)
+% Predicado: accesoToString(ListaAccesos, AccesosString).
+% Meta primaria: accesoToString
+% Descripción: La regla permite transformar un acceso a string
+
+accesoToString([], "").
+accesoToString([Usuario, Acceso], AccesoString):-
+    atomics_to_string(["Usuario Compartido: ", Usuario, " - ", "Acceso: ", Acceso, '\n'], AccesoString).
+
+% Ejemplo:
+% accesoToString(["crios", "W"], AccesoString).
+
+% Dominio: Se emplea una lista de listas de accesos de usuarios y dos variables (Acumulador y contenedor del string de Accesos)
+% Predicado: accesosToString(ListaDeListasAccesos, Acum, AccesosString).
+%            accesoToString(ListaAccesos, AccesosString).
+% Meta primaria: accesosToString
+% Meta secundaria: accesoToString
+% Descripción: La regla permite transformar todos los accesos en la lista de accesos a string
+
+accesosToString([], Acum, Acum).
+accesosToString([Cabeza|Resto], Acum, AccesosString):-
+    accesoToString(Cabeza, AccesoString),
+    string_concat(AccesoString, Acum, Aux),
+    accesosToString(Resto, Aux, AccesosString).
+
+% Ejemplo:
+% accesosToString([["crios", "W"], ["crios", "R"]], "", AccesosString).
+
+% Dominio: Se emplea un tipo de dato usuario, un entero y dos lista de listas, una del tipo de dato documento y otra de accesos
+% Predicado: usuarioOcompartido(Usuario, IDdocumento, ListaDocumentos, ListaAccesos).
+%            exist(Elemento, ListaDeElementos).
+% Meta primaria: usuarioOcompartido
+% Meta secundaria: exist
+% Descripción: La regla permite verificar si a un usuario le ha sido compartido el acceso a determinado documento
+
+usuarioOcompartido(Usuario, IDdocumento, ListaDocumentos, ListaAccesos):-
+    exist([IDdocumento, _, Usuario, _, _, _], ListaDocumentos),
+    !;
+    exist([Usuario, _], ListaAccesos),
+    !.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 % Requerimientos Funcionales
 
@@ -605,226 +824,6 @@ paradigmaDocsToString([NombrePlataforma, [DD, MM, YYYY], ListaUsuarios, ListaDoc
                        "Fecha creación plataforma: ", FechaString, '\n',
                         UsuariosString, '\n',
                         DocumentosString, '\n'], ActParadigmaDocs).
-
-
-
-
-
-
-
-
-
-
-    
-
-
-% Otros Predicados
-
-% Dominio: Se emplea un elemento de cualquier tipo y una lista
-% Predicado: exist(Elemento, ListaDeElementos).
-% Meta primaria: exist
-% Descripción: La regla permite verificar la existencia (o no) de un elemento en una lista
-
-exist(Elemento, [Elemento|_]):-
-    !.
-exist(Elemento, [_|Resto]):-
-    exist(Elemento, Resto).
-
-% Dominio: Se emplea un elemento de cualquier tipo, una lista y una variable (contenedor Resultado)
-% Predicado: insertarAlPrincipio(Elemento, Lista, ListaRetorno).
-% Meta primaria: insertarAlPrincipio
-% Descripción: La regla permite insertar un elemento a la cabeza de una lista
-
-insertarAlPrincipio(Elemento, [], [Elemento]):-
-    !.
-insertarAlPrincipio(Elemento, Lista, [Elemento|Lista]).
-
-% Dominio: Se emplea un elemento de cualquier tipo, una lista y una variable (contenedor Elemento)
-% Predicado: extraer(Elemento, ListaDeElementos, ElementoRetorno).
-% Meta primaria: extraer
-% Descripción: La regla permite desglosar y/o obtener un elemento especifico de una lista de elementos
-
-extraer(Elemento, [Elemento|_], Elemento):-
-    !.
-extraer(Elemento, [_|Resto], Elemento):-
-    extraer(Elemento, Resto, Elemento).
-
-% Dominio: Se emplea un elemento de cualquier tipo, una lista y una variable (contenedor Resto)
-% Predicado: borrarElemento(Elemento, ListaDeElementos, ListaResto).
-% Meta primaria: borrarElemento
-% Descripción: La regla permite remover un elemento especifico de una lista de elementos
-
-borrarElemento(Elemento, [Elemento|Resto], Resto):-
-    !.
-borrarElemento(Elemento, [Cabeza|Resto], [Cabeza|Retorno]):-
-    borrarElemento(Elemento, Resto, Retorno).
-
-% Dominio: Se emplea un elemento de cualquier tipo, una lista y una variable (contenedor Lista)
-% Predicado: insertarAlFinal(Elemento, ListaDeElementos, ListaNueva).
-% Meta primaria: insertarAlFinal
-% Descripción: La regla permite insertar un elemento al final de una lista de elementos
-
-insertarAlFinal(Elemento, [], [Elemento]):-
-    !.
-insertarAlFinal(Elemento, [Cabeza|Resto], [Cabeza|Lista]):-
-    insertarAlFinal(Elemento, Resto, Lista).
-
-% Dominio: Se emplea una lista y una variable (contenedor Largo)
-% Predicado: largoLista(ListaDeElementos, Largo).
-% Meta primaria: largoLista
-% Descripción: La regla permite obtener el largo de una lista
-
-largoLista([], 0).
-largoLista([_|Resto], Largo):-
-    largoLista(Resto, LargoAcum),
-    Largo is LargoAcum + 1.
-
-% Dominio: Se emplea una lista de listas y una variable (contenedor Combinaciones)
-% Predicado: productoLista(ListaDeListas, Combinaciones).
-%            producto(Lista, ListaDeListas, Acum).
-% Meta primaria: productoLista
-% Meta secundaria: producto
-% Descripción: La regla permite obtener las distintas combinaciones pares de acuerdo a listas de listas...
-%              ... (orientado al requerimiento funcional paradigmaDocsShare)
-
-% Si es una lista de un elemento...
-% Ej: productoLista([["u1"]], Combinaciones).
-productoLista([[Cabeza]], [[Cabeza]]):-
-    !.
-% Si es una lista de mas de un elemento...
-% Ej: productoLista([["u1", "u5"]], Combinaciones).
-productoLista([[Cabeza|Resto1]], [[Cabeza]|Resto2]) :- 
-    productoLista([Resto1], Resto2),
-    !.
-
-% Si son mas de una lista de elementos...
-% Ej: productoLista([["u1", "u5"], ["R", "W", "C"]], Combinaciones).
-productoLista([Cabeza|Resto1], Resto2) :-
-    productoLista(Resto1, R1),
-    producto(Cabeza, R1, Resto2),
-    !.
-
-% Dominio: Se emplea una lista, lista de listas y una variable (contenedor Acum)
-% Predicado: producto(Lista, ListaDeListas, Acum).
-%            combinador(Elemento, ListaDeListas, Lista, Combinacion).
-% Meta primaria: producto
-% Meta secundaria: combinador
-% Descripción: La regla permite obtener los productos de un elemento de la primera lista con los multiples ...
-%              ... existentes (o no) en las listas de listas
-
-% Caso base, no hay nada listas que "multiplicar"
-producto([], _, []):-
-    !.
-% Caso recursivo, hay elementos de listas que "multiplicar" con elementos de listas de listas
-% Ej: producto(["u1", "u5"], [["R"], ["W"], ["C"]], Producto).
-producto([Cabeza|Resto], ListadeListas, Acum) :-
-    producto(Resto, ListadeListas, Lista),
-    combinador(Cabeza, ListadeListas, Lista, Acum),
-    !.
-
-% Dominio: Se emplea un elemento (string), lista de listas, lista inicialmente vacia y una variable (contenedor Combinacion)
-% Predicado: combinador(Elemento, ListaDeListas, Lista, Combinacion).
-% Meta primaria: combinador
-% Descripción: La regla permite la "unión" del elemento ingresado con los elementos dentro de la lista de listas
-
-% Caso base, el primer elemento no puede "combinarse" con los elementos contenidos en la primera lista ya que no hay ninguno
-% Ej: combinador("u5", [], [], Com).
-combinador(_, [], Lista, Lista):-
-    !.
-% Caso recursivo, el primer elemento puede ser "combinado" aun con los elementos de la lista de listas
-% combinador("u5", [["R"], ["W"], ["C"]], [], Com).
-combinador(Elemento, [Cabeza1|Resto1], Lista, [[Elemento|Cabeza1]|Resto2]) :-
-    combinador(Elemento, Resto1, Lista, Resto2),
-    !.
-
-% Dominio: Se emplean dos listas y una variable (contenedor Concatenado)
-% Predicado: concatenar(Lista1, Lista2, ListasConcatenadas).
-% Meta primaria: concatenar
-% Descripción: La regla permite la concatenación de dos listas
-
-concatenar([], Lista, Lista).
-concatenar([Cabeza|Resto], Lista, [Cabeza|ListaFinal]):-
-    concatenar(Resto, Lista, ListaFinal).
-
-% Dominio: Se emplea un tipo de dato versión (lista) y dos variables (Acumulador y contenedor Correlativo)
-% Predicado: correlativo(ListaVersion, Lista, ListaVersionCorrelativa).
-%            largoLista(ListaDeElementos, Largo).
-%            modificarIDversion(ListaVersionAntigua, IDnuevo, ListaVersionNueva).
-%            insertarAlPrincipio(Elemento, Lista, ListaRetorno).
-% Meta primaria: correlativo
-% Metas secundarias: largoLista
-%                    modificarIDversion
-%                    insertarAlPrincipio
-% Descripción: La regla permite "ordenar" los identificadores de los tipo de datos version (lista) contenidos...
-%              ... en una lista de listas de forma correlativa (de 0 a N)
-
-correlativo([], Acum, Acum).
-correlativo([Cabeza|Resto], Acum, VersionCorrelativa):-
-    largoLista(Resto, IDversion),
-    modificarIDversion(Cabeza, IDversion, Act),
-    insertarAlPrincipio(Act, Acum, V),
-    correlativo(Resto, V, VersionCorrelativa).
-% Ej: correlativo([[100, [1, 12, 2021], "hola mundo, este es el contenido de un archivo"], [200, [19, 12, 2021], "Este es el segundo texto y/o contenido"], [300, [19, 12, 2021], "Este es el tercer texto y/o contenido"]], Acumulador, VersionesCorrelativas).
-
-% Dominio: Se emplea un tipo de dato usuario, un entero y dos lista de listas, una del tipo de dato documento y otra de accesos
-% Predicado: usuarioOcompartidoEditar(Usuario, IDdocumento, ListaDocumentos, ListaAccesos).
-%            exist(Elemento, ListaDeElementos).
-% Meta primaria: usuarioOcompartidoEditar
-% Meta secundaria: exist
-% Descripción: La regla permite verificar si un usuario puede editar determinado documento de acuerdo a si este figura...
-%              ... como autor o le haya sido compartido con permiso de escritura
-
-usuarioOcompartidoEditar(Usuario, IDdocumento, ListaDocumentos, ListaAccesos):-
-    exist([IDdocumento, _, Usuario, _, _, _], ListaDocumentos),
-    !;
-    exist([Usuario, "W"], ListaAccesos),
-    !.
-
-% Dominio: Se emplea una lista de accesos de usuarios y una variable (contenedor del string de Accesos)
-% Predicado: accesoToString(ListaAccesos, AccesosString).
-% Meta primaria: accesoToString
-% Descripción: La regla permite transformar un acceso a string
-
-accesoToString([], "").
-accesoToString([Usuario, Acceso], AccesoString):-
-    atomics_to_string(["Usuario Compartido: ", Usuario, " - ", "Acceso: ", Acceso, '\n'], AccesoString).
-
-% Ejemplo:
-% accesoToString(["crios", "W"], AccesoString).
-
-% Dominio: Se emplea una lista de listas de accesos de usuarios y dos variables (Acumulador y contenedor del string de Accesos)
-% Predicado: accesosToString(ListaDeListasAccesos, Acum, AccesosString).
-%            accesoToString(ListaAccesos, AccesosString).
-% Meta primaria: accesosToString
-% Meta secundaria: accesoToString
-% Descripción: La regla permite transformar todos los accesos en la lista de accesos a string
-
-accesosToString([], Acum, Acum).
-accesosToString([Cabeza|Resto], Acum, AccesosString):-
-    accesoToString(Cabeza, AccesoString),
-    string_concat(AccesoString, Acum, Aux),
-    accesosToString(Resto, Aux, AccesosString).
-
-% Ejemplo:
-% accesosToString([["crios", "W"], ["crios", "R"]], "", AccesosString).
-
-% Dominio: Se emplea un tipo de dato usuario, un entero y dos lista de listas, una del tipo de dato documento y otra de accesos
-% Predicado: usuarioOcompartido(Usuario, IDdocumento, ListaDocumentos, ListaAccesos).
-%            exist(Elemento, ListaDeElementos).
-% Meta primaria: usuarioOcompartido
-% Meta secundaria: exist
-% Descripción: La regla permite verificar si a un usuario le ha sido compartido el acceso a determinado documento
-
-usuarioOcompartido(Usuario, IDdocumento, ListaDocumentos, ListaAccesos):-
-    exist([IDdocumento, _, Usuario, _, _, _], ListaDocumentos),
-    !;
-    exist([Usuario, _], ListaAccesos),
-    !.
-
-
-
-
-
 
 
 
